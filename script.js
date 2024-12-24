@@ -122,4 +122,7 @@ updateTime()
 startSyncedInterval(15000, updateTime);
 
 
-
+$id("playful").addEventListener("click", function(){
+    applyColorPalettePlayful()
+    applyRandomRotation()
+})
