@@ -39,7 +39,26 @@ function applyRandomRotation(){
     playful_minutes_ones.style.transform = `rotate(${getRandomNumber(-10,10)}deg)`
 }
 
-function applyColorPalette(){
+function applyColorPalettePlayful(){
+    let id = getRandomNumber(0,color_palette.length-1)
+    let palette = color_palette[id]
+    playful_hour_tens.style.color = palette[0]
+    playful_hour_ones.style.color = palette[1]
+    playful_dots.style.color = palette[2]
+    playful_minutes_tens.style.color = palette[3]
+    playful_minutes_ones.style.color = palette[4]
+}
+function applyColorPaletteModern(){
+    let id = getRandomNumber(0,color_palette.length-1)
+    let palette = color_palette[id]
+    console.log(palette)
+    playful_hour_tens.style.color = palette[0]
+    playful_hour_ones.style.color = palette[1]
+    playful_dots.style.color = palette[2]
+    playful_minutes_tens.style.color = palette[3]
+    playful_minutes_ones.style.color = palette[4]
+}
+function applyColorPaletteClassic(){
     let id = getRandomNumber(0,color_palette.length-1)
     let palette = color_palette[id]
     console.log(palette)
@@ -84,12 +103,23 @@ function updateTime(){
     }
 
     applyRandomRotation()
-    applyColorPalette()
+    applyColorPalettePlayful()
           
 }
 
 
+function startSyncedInterval(interval, callback) {
+    const now = new Date();
+    const delay = interval - (now.getSeconds() * 1000 + now.getMilliseconds()) % interval;
+
+    setTimeout(() => {
+        callback();
+        setInterval(callback, interval);
+    }, delay);
+}
+
 updateTime()
-setInterval(updateTime, 15000)
+startSyncedInterval(15000, updateTime);
+
 
 
