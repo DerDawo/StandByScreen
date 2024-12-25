@@ -81,7 +81,7 @@ body.ios #playful>.time-wrapper>.time {
 
 .hand {
     background: white;
-    border-radius: 15px 15px 0 0;
+    border-radius: 15px;
     position: absolute;
     bottom: 50%;
     left: 50%;
@@ -95,7 +95,7 @@ body.ios #playful>.time-wrapper>.time {
     width: 0.1rem;
     height: var(--sec-hand);
     transform: translateX(-50%) rotate(0deg);
-    z-index: 2;
+    z-index: 3;
 }
 
 .minute {
@@ -122,6 +122,7 @@ body.ios #playful>.time-wrapper>.time {
     user-select: none;
     font-size: 1rem;
     padding: 1rem;
+    transition: 0.3s;
 }
 
 .hour-number::before {

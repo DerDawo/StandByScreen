@@ -9,13 +9,27 @@ const modern_dots = $id("modern").getElementsByClassName("time")[2]
 const modern_minutes_tens = $id("modern").getElementsByClassName("time")[3]
 const modern_minutes_ones = $id("modern").getElementsByClassName("time")[4]
 
-const color_palette = [
+const color_palette_playful = [
     ["#cc5803dd", "#e2711ddd", "#ff9505dd", "#ffb627dd", "#ffc971dd"], //orange
     ["#ffd6ffdd", "#e7c6ffdd", "#c8b6ffdd", "#b8c0ffdd", "#bbd0ffdd"], //purple
     ["#f08080dd", "#f4978edd", "#f8ad9ddd", "#fbc4abdd", "#ffdab9dd"], //coral
     ["#d8f3dcdd", "#b7e4c7dd", "#95d5b2dd", "#74c69ddd", "#52b788dd"], //green
     ["#d7e3fcdd", "#ccdbfddd", "#c1d3fedd", "#b6ccfedd", "#abc4ffdd"]  //blue
 ]
+
+let cppid = 0
+
+const color_palette_classic = [
+    "#ffbe0bdd", //yellow
+    "#fb5607dd", //orange
+    "#ff006edd", //pink
+    "#8338ecdd", //purple
+    "#3a86ffdd", //blue
+    "#ffffff", //white
+    "#06d6a0dd"  //green
+]
+
+let cpcid = 0
 
 function $className(className){
     return document.getElementsByClassName(className)
@@ -40,8 +54,8 @@ function applyRandomRotation(){
 }
 
 function applyColorPalettePlayful(){
-    let id = getRandomNumber(0,color_palette.length-1)
-    let palette = color_palette[id]
+    let id = getRandomNumber(0,color_palette_playful.length-1)
+    let palette = color_palette_playful[id]
     playful_hour_tens.style.color = palette[0]
     playful_hour_ones.style.color = palette[1]
     playful_dots.style.color = palette[2]
@@ -49,8 +63,8 @@ function applyColorPalettePlayful(){
     playful_minutes_ones.style.color = palette[4]
 }
 function applyColorPaletteModern(){
-    let id = getRandomNumber(0,color_palette.length-1)
-    let palette = color_palette[id]
+    let id = getRandomNumber(0,color_palette_playful.length-1)
+    let palette = color_palette_playful[id]
     console.log(palette)
     playful_hour_tens.style.color = palette[0]
     playful_hour_ones.style.color = palette[1]
@@ -59,14 +73,13 @@ function applyColorPaletteModern(){
     playful_minutes_ones.style.color = palette[4]
 }
 function applyColorPaletteClassic(){
-    let id = getRandomNumber(0,color_palette.length-1)
-    let palette = color_palette[id]
-    console.log(palette)
-    playful_hour_tens.style.color = palette[0]
-    playful_hour_ones.style.color = palette[1]
-    playful_dots.style.color = palette[2]
-    playful_minutes_tens.style.color = palette[3]
-    playful_minutes_ones.style.color = palette[4]
+    cpcid += 1
+    if (cpcid > color_palette_classic.length-1){
+        cpcid = 0
+    }
+    let palette = color_palette_classic[cpcid]
+    document.documentElement.style.setProperty("--palette-color", palette); 
+    
 }
 
 function updateTime(){
@@ -166,4 +179,9 @@ startSyncedInterval(15000, updateTime);
 $id("playful").addEventListener("click", function(){
     applyColorPalettePlayful()
     applyRandomRotation()
+})
+
+
+$id("classic-clock").addEventListener("click", function(){
+    applyColorPaletteClassic()
 })
