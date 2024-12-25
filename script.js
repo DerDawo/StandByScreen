@@ -10,11 +10,11 @@ const modern_minutes_tens = $id("modern").getElementsByClassName("time")[3]
 const modern_minutes_ones = $id("modern").getElementsByClassName("time")[4]
 
 const color_palette = [
-    ["#cc5803b2", "#e2711db2", "#ff9505b2", "#ffb627b2", "#ffc971b2"],
-    ["#ffd6ffb2", "#e7c6ffb2", "#c8b6ffb2", "#b8c0ffb2", "#bbd0ffb2"],
-    ["#f08080b2", "#f4978eb2", "#f8ad9db2", "#fbc4abb2", "#ffdab9b2"],
-    ["#cad2c5b2", "#84a98cb2", "#52796fb2", "#354f52b2", "#2f3e46b2"],
-    ["#03045eb2", "#0077b6b2", "#00b4d8b2", "#90e0efb2", "#caf0f8b2"]
+    ["#cc5803dd", "#e2711ddd", "#ff9505dd", "#ffb627dd", "#ffc971dd"], //orange
+    ["#ffd6ffdd", "#e7c6ffdd", "#c8b6ffdd", "#b8c0ffdd", "#bbd0ffdd"], //purple
+    ["#f08080dd", "#f4978edd", "#f8ad9ddd", "#fbc4abdd", "#ffdab9dd"], //coral
+    ["#d8f3dcdd", "#b7e4c7dd", "#95d5b2dd", "#74c69ddd", "#52b788dd"], //green
+    ["#d7e3fcdd", "#ccdbfddd", "#c1d3fedd", "#b6ccfedd", "#abc4ffdd"]  //blue
 ]
 
 function $className(className){
