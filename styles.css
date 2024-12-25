@@ -37,3 +37,9 @@ html, body{
     margin: -0.5rem;
     transform: translate(0,-2rem);
 }
+
+
+/* Apply Arial font on iOS devices */
+body.ios #playful>.time-wrapper>.time {
+    font-family: 'Arial', sans-serif;
+}

@@ -118,6 +118,12 @@ function startSyncedInterval(interval, callback) {
     }, delay);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        document.body.classList.add('ios');
+    }
+});
+
 updateTime()
 startSyncedInterval(15000, updateTime);
 
