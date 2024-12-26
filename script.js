@@ -107,7 +107,7 @@ function applyColorPaletteClassic() {
     document.documentElement.style.setProperty("--palette-color", palette);
 }
 
-function updatePlayfulClock() {
+function updatePlayfulAndModernClock() {
     const now = new Date();
     const hours = String(now.getHours());
     const minutes = String(now.getMinutes());
@@ -141,7 +141,7 @@ function updatePlayfulClock() {
     }
 }
 
-function updatePlayfulClockStyle() {
+function updatePlayfulAndModernClockStyle() {
     applyRandomRotationPlayful()
     applyColorPalettePlayful()
 }
@@ -164,12 +164,12 @@ function init(){
     if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
         document.body.classList.add('ios');
     }
-    updatePlayfulClock();
+    updatePlayfulAndModernClock();
     updateClassicClock();
-    updatePlayfulClockStyle();
+    updatePlayfulAndModernClockStyle();
     startSyncedInterval(1000, updateClassicClock);
-    startSyncedInterval(1000, updatePlayfulClock);
-    startSyncedInterval(60000, updatePlayfulClockStyle);
+    startSyncedInterval(1000, updatePlayfulAndModernClock);
+    startSyncedInterval(60000, updatePlayfulAndModernClockStyle);
 }
 
 
