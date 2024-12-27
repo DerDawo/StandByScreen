@@ -8,6 +8,7 @@
     <script src="script.js" defer></script>
 
     <link rel="stylesheet" type="text/css" href="./libs/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="./libs/slick/slick-theme.css"/>
     <script type="text/javascript" src="./libs/jquery/jquery-3.7.1.min.js" defer></script>
     <script type="text/javascript" src="./libs/slick/slick.min.js" defer></script>
 
@@ -99,42 +100,47 @@
 
 </head>
 <body>
-    <div class="stand-by-screen-wrapper" id="playful" >
-        <div class="time-wrapper">
-            <p class="time hour-tens">0</p>        
-            <p class="time hour-ones">0</p>        
-            <p class="time dots">:</p>        
-            <p class="time minute-tens">0</p>        
-            <p class="time minute-ones">0</p>        
-        </div>
-    </div>
-    <div class="stand-by-screen-wrapper" id="modern">
-        <div class="time-wrapper">
-            <span class="time hour-tens">0</span>        
-            <span class="time hour-ones">0</span>        
-            <span class="time dots">:</span>        
-            <span class="time minute-tens">0</span>        
-            <span class="time minute-ones">0</span>        
-        </div>
-        <div class="information">
-            <span>WED</span>
-            <span>25</span>
-            <span>☁</span>
-            <span>2°</span>
-        </div>
-    </div>
-    <div class="stand-by-screen-wrapper" id="classic">
-        <div class="time-wrapper" id="classic-clock">
-            <div class="clock-body">
-                <div class="hours"></div>
-                <div class="hand second"></div>
-                <div class="hand minute"></div>
-                <div class="hand hour"></div>
+    <div class="stand-by-screen-caroussel">
+        <div class="stand-by-screen-wrapper" id="top-end" ></div>
+        <div class="stand-by-screen-wrapper" id="playful" >
+            <div class="time-wrapper">
+                <p class="time hour-tens">0</p>        
+                <p class="time hour-ones">0</p>        
+                <p class="time dots">:</p>        
+                <p class="time minute-tens">0</p>        
+                <p class="time minute-ones">0</p>        
             </div>
         </div>
-        <div class="calendar">
-
+        <div class="stand-by-screen-wrapper" id="modern">
+            <div class="time-wrapper">
+                <span class="time hour-tens">0</span>        
+                <span class="time hour-ones">0</span>        
+                <span class="time dots">:</span>        
+                <span class="time minute-tens">0</span>        
+                <span class="time minute-ones">0</span>        
+            </div>
+            <div class="information">
+                <span>WED</span>
+                <span>25</span>
+                <span>☁</span>
+                <span>2°</span>
+            </div>
         </div>
+        <div class="stand-by-screen-wrapper" id="classic">
+            <div class="time-wrapper" id="classic-clock">
+                <div class="clock-body">
+                    <div class="hours"></div>
+                    <div class="hand second"></div>
+                    <div class="hand minute"></div>
+                    <div class="hand hour"></div>
+                </div>
+            </div>
+            <div class="calendar">
+                
+            </div>
+        </div>
+        <div class="stand-by-screen-wrapper" id="bottom-end" ></div>
+
     </div>
 </body>
 </html>

@@ -7,7 +7,11 @@ body {
     color: white;
     padding: 0;
     margin: 0;
-    overflow: hidden;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+body::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
 }
 
 .stand-by-screen-wrapper {
@@ -16,6 +20,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: translate 500ms;
 }
 
 #playful>.time-wrapper {

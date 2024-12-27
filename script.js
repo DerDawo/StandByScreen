@@ -1,3 +1,7 @@
+// Caroussel DOM
+const standby_caroussel = $className("stand-by-screen-caroussel")[0]
+const standby_caroussel_children = standby_caroussel.children
+let focused_caroussel_child_id = 1;
 // playful clock DOM elements
 const playful_hour_tens = $id("playful").getElementsByClassName("time")[0]
 const playful_hour_ones = $id("playful").getElementsByClassName("time")[1]
@@ -170,8 +174,8 @@ function init(){
     startSyncedInterval(1000, updateClassicClock);
     startSyncedInterval(1000, updatePlayfulAndModernClock);
     startSyncedInterval(60000, updatePlayfulAndModernClockStyle);
+    standby_caroussel_children[focused_caroussel_child_id].scrollIntoView({ behavior: 'smooth' });
 }
-
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -183,7 +187,49 @@ $id("playful").addEventListener("click", function () {
     applyRandomRotationPlayful()
 })
 
-
 $id("classic-clock").addEventListener("click", function () {
     applyColorPaletteClassic()
 })
+
+var swipedir,
+startY,
+distY,
+threshold = 5 //required min distance traveled to be considered swipe
+
+document.addEventListener('touchstart', function (e) {
+    swipedir = 'none'
+    let touch = e.changedTouches[0]
+    startY = touch.pageY
+    startTime = new Date().getTime() // record time when finger first makes contact with surface
+}, false)
+
+document.addEventListener('touchmove', function (e) {
+    e.preventDefault() // prevent scrolling when inside DIV
+}, false)
+
+
+document.addEventListener('touchend', function (e) {
+   
+    let touch = e.changedTouches[0]
+    distY = touch.pageY - startY // get vertical dist traveled by finger while in contact with surface
+
+    console.log(distY)
+
+    if (Math.abs(distY) < threshold ) {
+        standby_caroussel_children[focused_caroussel_child_id].scrollIntoView({ behavior: 'smooth' });
+        return
+    } 
+    
+    swipedir = (distY < 0) ? 'up' : 'down' 
+    
+    
+    if (swipedir == 'up') {focused_caroussel_child_id += 1}
+    if (swipedir == 'down') {focused_caroussel_child_id -= 1}
+    
+    if (focused_caroussel_child_id < 1) {focused_caroussel_child_id = 1}
+    if (focused_caroussel_child_id > standby_caroussel_children.length - 2) {
+        focused_caroussel_child_id = standby_caroussel_children.length - 2
+    }
+
+    standby_caroussel_children[focused_caroussel_child_id].scrollIntoView({ behavior: 'smooth' });
+}, false)
