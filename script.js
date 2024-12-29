@@ -213,7 +213,7 @@ standby_caroussel.addEventListener('mousedown', function (e) {
     touchstart = true
 }, false)
 
-standby_caroussel.addEventListener('touchdown', function (e) {
+standby_caroussel.addEventListener('touchstart', function (e) {
     e.preventDefault()
     startY = e.clientY
     touchstart = true
@@ -274,7 +274,7 @@ standby_caroussel.addEventListener('mouseup', function (e) {
 
 }, false)
 
-standby_caroussel.addEventListener('toucheup', function (e) {
+standby_caroussel.addEventListener('touchend', function (e) {
     e.preventDefault()
     touchstart = false
     swipedY = Math.abs(e.clientY - startY)
