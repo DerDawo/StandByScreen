@@ -1,7 +1,6 @@
 // Caroussel DOM
 const standby_caroussel = $className("stand-by-screen-caroussel")[0]
 const standby_caroussel_children = standby_caroussel.children
-let focused_caroussel_child_id = 1;
 // playful clock DOM elements
 const playful_hour_tens = $id("playful").getElementsByClassName("time")[0]
 const playful_hour_ones = $id("playful").getElementsByClassName("time")[1]
@@ -164,7 +163,14 @@ function updateClassicClock() {
     hourHand.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
 }
 
-function init(){
+function animateCarousselSwipe() {
+    standby_caroussel.style.transition = "transform 0.5s"
+    setTimeout(() => {
+        standby_caroussel.style.transition = "none"
+    }, 500)
+}
+
+function init() {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
         document.body.classList.add('ios');
     }
@@ -174,12 +180,11 @@ function init(){
     startSyncedInterval(1000, updateClassicClock);
     startSyncedInterval(1000, updatePlayfulAndModernClock);
     startSyncedInterval(60000, updatePlayfulAndModernClockStyle);
-    standby_caroussel_children[focused_caroussel_child_id].scrollIntoView({ behavior: 'smooth' });
 }
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    init();	
+    init();
 });
 
 $id("playful").addEventListener("click", function () {
@@ -191,45 +196,67 @@ $id("classic-clock").addEventListener("click", function () {
     applyColorPaletteClassic()
 })
 
-var swipedir,
-startY,
-distY,
-threshold = 5 //required min distance traveled to be considered swipe
+// vars for caroussel and tocuh
+let startY = 0;
+let swipedY = 0;
+let endY = 0;
+let translateY = 0;
+let touchstart = false;
+const threshold = 0.25;
+const threshold_screen_height = window.innerHeight * threshold;
+const max_screen_height = window.innerHeight * (standby_caroussel_children.length - 1)
+let swipe_direction = 0;
 
-document.addEventListener('touchstart', function (e) {
-    swipedir = 'none'
-    let touch = e.changedTouches[0]
-    startY = touch.pageY
-    startTime = new Date().getTime() // record time when finger first makes contact with surface
+standby_caroussel.addEventListener('mousedown', function (e) {
+    e.preventDefault()
+    startY = e.clientY
+    touchstart = true
 }, false)
 
-document.addEventListener('touchmove', function (e) {
-    e.preventDefault() // prevent scrolling when inside DIV
+standby_caroussel.addEventListener('mousemove', function (e) {
+    e.preventDefault()
+    if (!touchstart) return
+    let swipingY = e.clientY - startY
+    standby_caroussel.style.transform = `translateY(${translateY + swipingY}px)`
 }, false)
 
+standby_caroussel.addEventListener('mouseup', function (e) {
+    e.preventDefault()
+    touchstart = false
+    swipedY = Math.abs(e.clientY - startY)
 
-document.addEventListener('touchend', function (e) {
-   
-    let touch = e.changedTouches[0]
-    distY = touch.pageY - startY // get vertical dist traveled by finger while in contact with surface
-
-    console.log(distY)
-
-    if (Math.abs(distY) < threshold ) {
-        standby_caroussel_children[focused_caroussel_child_id].scrollIntoView({ behavior: 'smooth' });
+    if (!(swipedY > threshold_screen_height)) {
+        standby_caroussel.style.transform = `translateY(${translateY}px)`
         return
-    } 
-    
-    swipedir = (distY < 0) ? 'up' : 'down' 
-    
-    
-    if (swipedir == 'up') {focused_caroussel_child_id += 1}
-    if (swipedir == 'down') {focused_caroussel_child_id -= 1}
-    
-    if (focused_caroussel_child_id < 1) {focused_caroussel_child_id = 1}
-    if (focused_caroussel_child_id > standby_caroussel_children.length - 2) {
-        focused_caroussel_child_id = standby_caroussel_children.length - 2
     }
 
-    standby_caroussel_children[focused_caroussel_child_id].scrollIntoView({ behavior: 'smooth' });
+    if (e.clientY - startY < 0) {
+        swipe_direction = -1 // swipe up
+    } else if (e.clientY - startY > 0) {
+        swipe_direction = 1 // swipe down
+    } else {
+        swipe_direction = 0
+    }
+
+    if (swipe_direction == 0) return
+
+    let new_translate_y = translateY + (swipe_direction * window.innerHeight)
+    
+    if (-new_translate_y < window.innerHeight) {
+        translateY = 0
+        standby_caroussel.style.transform = `translateY(${translateY}px)`
+        animateCarousselSwipe()
+        return
+    }
+    
+    if (Math.abs(new_translate_y) > max_screen_height) {
+        standby_caroussel.style.transform = `translateY(${translateY}px)`
+        animateCarousselSwipe()
+        return
+    }
+    
+    translateY = new_translate_y
+    standby_caroussel.style.transform = `translateY(${translateY}px)`
+    animateCarousselSwipe()
+
 }, false)

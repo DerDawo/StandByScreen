@@ -1,0 +1,28 @@
+
+#playful>.time-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#playful>.time-wrapper>.time {
+    margin: -1.5rem;
+    padding: 0;
+    font-family: 'Alata', 'Arial', sans-serif;
+    font-weight: bold;
+    font-size: clamp(14rem, 16rem, 100px);
+    transition: 1s;
+    text-shadow: #000000 2px 2px 10px;
+}
+
+#playful>.time-wrapper>.dots {
+    margin: -0.5rem;
+    transform: translate(0, -2rem);
+}
+
+
+/* Apply Arial font on iOS devices */
+body.ios #playful>.time-wrapper>.time {
+    font-family: 'Arial', sans-serif;
+}

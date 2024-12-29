@@ -1,0 +1,103 @@
+
+#classic>.time-wrapper {
+    width: 100%;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.clock-body {
+    font-family: "Open Sans", sans-serif;
+    height: 80%;
+    width: 80%;
+    border-radius: 50%;
+    position: relative;
+}
+
+.hand {
+    background: white;
+    border-radius: 15px;
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom;
+    transition: all 0.05s;
+    transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+}
+
+.second {
+    background: var(--palette-color);
+    width: 0.1rem;
+    height: var(--sec-hand);
+    transform: translateX(-50%) rotate(0deg);
+    z-index: 3;
+}
+
+.minute {
+    height: var(--min-hand);
+    width: 0.3rem;
+    transform: translateX(-50%) rotate(0deg);
+    background: white;
+}
+
+.hour {
+    height: var(--hour-hand);
+    width: 0.4rem;
+    background: white;
+    transform: translateX(-50%) rotate(0deg);
+    z-index: 21;
+}
+
+.hour-number {
+    position: absolute;
+    left: 50%;
+    height: calc(50% - 2rem);
+    transform-origin: bottom;
+    color: var(--palette-color);
+    user-select: none;
+    font-size: 1rem;
+    padding: 1rem;
+    transition: 0.3s;
+}
+
+.hour-number::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    top: 0px;
+    border-radius: 0px 0px 15px 15px;
+    transform: translateX(-50%);
+    background: var(--palette-color);
+}
+
+.hour-number::before {
+    height: 10px;
+    width: 4px;
+}
+
+.minute-bar {
+    position: absolute;
+    left: 50%;
+    width: 1rem;
+    height: 50%;
+    transform-origin: bottom;
+    transform: rotate(20deg) translateX(-50%);
+}
+
+.minute-bar::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    top: 0px;
+    border-radius: 0px 0px 15px 15px;
+    transform: translateX(-50%);
+    background: white;
+}
+
+.minute-bar::before {
+    height: 6px;
+    width: 2px;
+}
