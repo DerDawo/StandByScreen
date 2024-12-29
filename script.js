@@ -213,6 +213,12 @@ standby_caroussel.addEventListener('mousedown', function (e) {
     touchstart = true
 }, false)
 
+standby_caroussel.addEventListener('touchdown', function (e) {
+    e.preventDefault()
+    startY = e.clientY
+    touchstart = true
+}, false)
+
 standby_caroussel.addEventListener('mousemove', function (e) {
     e.preventDefault()
     if (!touchstart) return
@@ -220,7 +226,55 @@ standby_caroussel.addEventListener('mousemove', function (e) {
     standby_caroussel.style.transform = `translateY(${translateY + swipingY}px)`
 }, false)
 
+standby_caroussel.addEventListener('touchmove', function (e) {
+    e.preventDefault()
+    if (!touchstart) return
+    let swipingY = e.clientY - startY
+    standby_caroussel.style.transform = `translateY(${translateY + swipingY}px)`
+}, false)
+
 standby_caroussel.addEventListener('mouseup', function (e) {
+    e.preventDefault()
+    touchstart = false
+    swipedY = Math.abs(e.clientY - startY)
+
+    if (!(swipedY > threshold_screen_height)) {
+        standby_caroussel.style.transform = `translateY(${translateY}px)`
+        return
+    }
+
+    if (e.clientY - startY < 0) {
+        swipe_direction = -1 // swipe up
+    } else if (e.clientY - startY > 0) {
+        swipe_direction = 1 // swipe down
+    } else {
+        swipe_direction = 0
+    }
+
+    if (swipe_direction == 0) return
+
+    let new_translate_y = translateY + (swipe_direction * window.innerHeight)
+    
+    if (-new_translate_y < window.innerHeight) {
+        translateY = 0
+        standby_caroussel.style.transform = `translateY(${translateY}px)`
+        animateCarousselSwipe()
+        return
+    }
+    
+    if (Math.abs(new_translate_y) > max_screen_height) {
+        standby_caroussel.style.transform = `translateY(${translateY}px)`
+        animateCarousselSwipe()
+        return
+    }
+    
+    translateY = new_translate_y
+    standby_caroussel.style.transform = `translateY(${translateY}px)`
+    animateCarousselSwipe()
+
+}, false)
+
+standby_caroussel.addEventListener('toucheup', function (e) {
     e.preventDefault()
     touchstart = false
     swipedY = Math.abs(e.clientY - startY)
