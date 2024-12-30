@@ -207,110 +207,117 @@ const threshold_screen_height = window.innerHeight * threshold;
 const max_screen_height = window.innerHeight * (standby_caroussel_children.length - 1)
 let swipe_direction = 0;
 
-standby_caroussel.addEventListener('mousedown', function (e) {
-    e.preventDefault()
-    startY = e.clientY
-    touchstart = true
-}, false)
-
-standby_caroussel.addEventListener('touchstart', function (e) {
-    e.preventDefault()
-    startY = e.clientY
-    touchstart = true
-}, false)
-
-standby_caroussel.addEventListener('mousemove', function (e) {
-    e.preventDefault()
-    if (!touchstart) return
-    let swipingY = e.clientY - startY
-    standby_caroussel.style.transform = `translateY(${translateY + swipingY}px)`
-}, false)
-
-standby_caroussel.addEventListener('touchmove', function (e) {
-    e.preventDefault()
-    if (!touchstart) return
-    let swipingY = e.clientY - startY
-    standby_caroussel.style.transform = `translateY(${translateY + swipingY}px)`
-}, false)
-
-standby_caroussel.addEventListener('mouseup', function (e) {
-    e.preventDefault()
-    touchstart = false
-    swipedY = Math.abs(e.clientY - startY)
-
-    if (!(swipedY > threshold_screen_height)) {
-        standby_caroussel.style.transform = `translateY(${translateY}px)`
-        return
-    }
-
-    if (e.clientY - startY < 0) {
-        swipe_direction = -1 // swipe up
-    } else if (e.clientY - startY > 0) {
-        swipe_direction = 1 // swipe down
-    } else {
-        swipe_direction = 0
-    }
-
-    if (swipe_direction == 0) return
-
-    let new_translate_y = translateY + (swipe_direction * window.innerHeight)
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+if (isMobile) {
     
-    if (-new_translate_y < window.innerHeight) {
-        translateY = 0
-        standby_caroussel.style.transform = `translateY(${translateY}px)`
-        animateCarousselSwipe()
-        return
-    }
-    
-    if (Math.abs(new_translate_y) > max_screen_height) {
+    document.addEventListener('touchstart', function (e) {
+        console.log("START")
+        e.preventDefault()
+        startY = e.clientY
+        touchstart = true
+    }, false)
+
+    document.addEventListener('touchmove', function (e) {
+        e.preventDefault()
+        if (!touchstart) return
+        let swipingY = e.clientY - startY
+        standby_caroussel.style.transform = `translateY(${translateY + swipingY}px)`
+    }, false)
+
+    document.addEventListener('touchend', function (e) {
+        e.preventDefault()
+        touchstart = false
+        swipedY = Math.abs(e.clientY - startY)
+
+        if (!(swipedY > threshold_screen_height)) {
+            standby_caroussel.style.transform = `translateY(${translateY}px)`
+            return
+        }
+
+        if (e.clientY - startY < 0) {
+            swipe_direction = -1 // swipe up
+        } else if (e.clientY - startY > 0) {
+            swipe_direction = 1 // swipe down
+        } else {
+            swipe_direction = 0
+        }
+
+        if (swipe_direction == 0) return
+
+        let new_translate_y = translateY + (swipe_direction * window.innerHeight)
+        
+        if (-new_translate_y < window.innerHeight) {
+            translateY = 0
+            standby_caroussel.style.transform = `translateY(${translateY}px)`
+            animateCarousselSwipe()
+            return
+        }
+        
+        if (Math.abs(new_translate_y) > max_screen_height) {
+            standby_caroussel.style.transform = `translateY(${translateY}px)`
+            animateCarousselSwipe()
+            return
+        }
+        
+        translateY = new_translate_y
         standby_caroussel.style.transform = `translateY(${translateY}px)`
         animateCarousselSwipe()
-        return
-    }
+
+    }, false)
+
+} else {
+    standby_caroussel.addEventListener('mousedown', function (e) {
+        e.preventDefault()
+        startY = e.clientY
+        touchstart = true
+    }, false)
     
-    translateY = new_translate_y
-    standby_caroussel.style.transform = `translateY(${translateY}px)`
-    animateCarousselSwipe()
+    standby_caroussel.addEventListener('mousemove', function (e) {
+        e.preventDefault()
+        if (!touchstart) return
+        let swipingY = e.clientY - startY
+        standby_caroussel.style.transform = `translateY(${translateY + swipingY}px)`
+    }, false)
+        
+    standby_caroussel.addEventListener('mouseup', function (e) {
+        e.preventDefault()
+        touchstart = false
+        swipedY = Math.abs(e.clientY - startY)
 
-}, false)
+        if (!(swipedY > threshold_screen_height)) {
+            standby_caroussel.style.transform = `translateY(${translateY}px)`
+            return
+        }
 
-standby_caroussel.addEventListener('touchend', function (e) {
-    e.preventDefault()
-    touchstart = false
-    swipedY = Math.abs(e.clientY - startY)
+        if (e.clientY - startY < 0) {
+            swipe_direction = -1 // swipe up
+        } else if (e.clientY - startY > 0) {
+            swipe_direction = 1 // swipe down
+        } else {
+            swipe_direction = 0
+        }
 
-    if (!(swipedY > threshold_screen_height)) {
-        standby_caroussel.style.transform = `translateY(${translateY}px)`
-        return
-    }
+        if (swipe_direction == 0) return
 
-    if (e.clientY - startY < 0) {
-        swipe_direction = -1 // swipe up
-    } else if (e.clientY - startY > 0) {
-        swipe_direction = 1 // swipe down
-    } else {
-        swipe_direction = 0
-    }
-
-    if (swipe_direction == 0) return
-
-    let new_translate_y = translateY + (swipe_direction * window.innerHeight)
-    
-    if (-new_translate_y < window.innerHeight) {
-        translateY = 0
+        let new_translate_y = translateY + (swipe_direction * window.innerHeight)
+        
+        if (-new_translate_y < window.innerHeight) {
+            translateY = 0
+            standby_caroussel.style.transform = `translateY(${translateY}px)`
+            animateCarousselSwipe()
+            return
+        }
+        
+        if (Math.abs(new_translate_y) > max_screen_height) {
+            standby_caroussel.style.transform = `translateY(${translateY}px)`
+            animateCarousselSwipe()
+            return
+        }
+        
+        translateY = new_translate_y
         standby_caroussel.style.transform = `translateY(${translateY}px)`
         animateCarousselSwipe()
-        return
-    }
-    
-    if (Math.abs(new_translate_y) > max_screen_height) {
-        standby_caroussel.style.transform = `translateY(${translateY}px)`
-        animateCarousselSwipe()
-        return
-    }
-    
-    translateY = new_translate_y
-    standby_caroussel.style.transform = `translateY(${translateY}px)`
-    animateCarousselSwipe()
 
-}, false)
+    }, false)
+}
+
