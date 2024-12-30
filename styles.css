@@ -11,10 +11,7 @@
 }
 
 html,
-body {
-    /*prevent zoom*/
-    touch-action: manipulation;
-    
+body {  
     background-color: black;
     color: white;
     padding: 0;

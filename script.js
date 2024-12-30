@@ -50,6 +50,7 @@ const color_palette_classic = [
 ]
 let cpcid = 0
 const color_palette_modern = [
+    '#ffffff', //white
     "#ffb627dd", //yellow
     "#e2711ddd", //orange
     "#ff006edd", //pink
