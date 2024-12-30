@@ -180,6 +180,7 @@ function init() {
     startSyncedInterval(1000, updateClassicClock);
     startSyncedInterval(1000, updatePlayfulAndModernClock);
     startSyncedInterval(60000, updatePlayfulAndModernClockStyle);
+    initSwipeFunctions();
 }
 
 
@@ -206,37 +207,37 @@ const threshold = 0.25;
 const threshold_screen_height = window.innerHeight * threshold;
 const max_screen_height = window.innerHeight * (standby_caroussel_children.length - 1)
 let swipe_direction = 0;
+let swipingY = 0;
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+function initSwipeFunctions() {
 if (isMobile) {
     
     document.addEventListener('touchstart', function (e) {
-        console.log("START")
-        e.preventDefault()
-        startY = e.clientY
+        startY = e.touches[0].pageY
         touchstart = true
     }, false)
-
+    
     document.addEventListener('touchmove', function (e) {
-        e.preventDefault()
+        e.preventDefault()        
         if (!touchstart) return
-        let swipingY = e.clientY - startY
+        swipingY = e.touches[0].pageY - startY
         standby_caroussel.style.transform = `translateY(${translateY + swipingY}px)`
     }, false)
 
     document.addEventListener('touchend', function (e) {
         e.preventDefault()
         touchstart = false
-        swipedY = Math.abs(e.clientY - startY)
+        swipedY = Math.abs(swipingY)
 
         if (!(swipedY > threshold_screen_height)) {
             standby_caroussel.style.transform = `translateY(${translateY}px)`
             return
         }
 
-        if (e.clientY - startY < 0) {
+        if (swipingY < 0) {
             swipe_direction = -1 // swipe up
-        } else if (e.clientY - startY > 0) {
+        } else if (swipingY > 0) {
             swipe_direction = 1 // swipe down
         } else {
             swipe_direction = 0
@@ -321,3 +322,4 @@ if (isMobile) {
     }, false)
 }
 
+}

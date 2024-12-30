@@ -1,0 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+
+#modern > .time-wrapper > .time {
+    font-family: "Oswald";
+    font-size: 15rem;    
+    letter-spacing: -15px;
+}
