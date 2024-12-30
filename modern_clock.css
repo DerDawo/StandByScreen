@@ -4,4 +4,5 @@
     font-family: "Oswald";
     font-size: 15rem;    
     letter-spacing: -15px;
+    transition: 1s;
 }
