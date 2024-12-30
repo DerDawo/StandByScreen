@@ -52,12 +52,12 @@
 .hour-number {
     position: absolute;
     left: 50%;
-    height: calc(50% - 2rem);
+    height: calc(50% - 4rem);
     transform-origin: bottom;
     color: var(--palette-color);
     user-select: none;
-    font-size: 1rem;
-    padding: 1rem;
+    font-size: 1.5rem;
+    padding: 2rem;
     transition: 0.3s;
 }
 
@@ -73,8 +73,9 @@
 }
 
 .hour-number::before {
-    height: 10px;
+    height: 25px;
     width: 4px;
+    border-radius: 5px;
 }
 
 .minute-bar {
@@ -98,6 +99,7 @@
 }
 
 .minute-bar::before {
-    height: 6px;
+    height: 14px;
     width: 2px;
+    border-radius: 4px;
 }
