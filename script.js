@@ -1,3 +1,67 @@
+// Icons
+const weather_icons =
+{
+    "day": {
+        "0": `<i class="wi wi-day-sunny"></i>`,
+        "1": `<i class="wi wi-day-cloudy"></i>`,
+        "2": `<i class="wi wi-day-cloudy"></i>`,
+        "3": `<i class="wi wi-day-sunny-overcast"></i>`,
+        "45": `<i class="wi wi-day-fog"></i>`,
+        "48": `<i class="wi wi-day-fog"></i>`,
+        "51": `<i class="wi wi-day-hail"></i>`,
+        "53": `<i class="wi wi-day-hail"></i>`,
+        "55": `<i class="wi wi-day-hail"></i>`,
+        "56": `<i class="wi wi-day-rain-mix"></i>`,
+        "57": `<i class="wi wi-day-rain-mix"></i>`,
+        "61": `<i class="wi wi-day-sprinkle"></i>`,
+        "63": `<i class="wi wi-day-showers"></i>`,
+        "65": `<i class="wi wi-day-rain"></i>`,
+        "66": `<i class="wi-day-sleet"></i>`,
+        "67": `<i class="wi-day-sleet"></i>`,
+        "71": `<i class="wi wi-day-snow"></i>`,
+        "73": `<i class="wi wi-day-snow"></i>`,
+        "75": `<i class="wi wi-day-snow"></i>`,
+        "77": `<i class="wi wi-day-snow"></i>`,
+        "80": `<i class="wi wi-day-rain"></i>`,
+        "81": `<i class="wi wi-day-rain"></i>`,
+        "82": `<i class="wi wi-day-rain"></i>`,
+        "85": `<i class="wi wi-day-snow-wind"></i>`,
+        "86": `<i class="wi wi-day-snow-wind"></i>`,
+        "95": `<i class="wi wi-day-thunderstorm"></i>`,
+        "96": `<i class="wi wi-day-thunderstorm"></i>`,
+        "99": `<i class="wi wi-day-thunderstorm"></i>`
+    },
+    "night": {
+        "0": `<i class="wi wi-night-clear"></i>`,
+        "1": `<i class="wi wi-night-cloudy"></i>`,
+        "2": `<i class="wi wi-night-cloudy"></i>`,
+        "3": `<i class="wi wi-night-sunny-overcast"></i>`,
+        "45": `<i class="wi wi-night-fog"></i>`,
+        "48": `<i class="wi wi-night-fog"></i>`,
+        "51": `<i class="wi wi-night-hail"></i>`,
+        "53": `<i class="wi wi-night-hail"></i>`,
+        "55": `<i class="wi wi-night-hail"></i>`,
+        "56": `<i class="wi wi-night-rain-mix"></i>`,
+        "57": `<i class="wi wi-night-rain-mix"></i>`,
+        "61": `<i class="wi wi-night-sprinkle"></i>`,
+        "63": `<i class="wi wi-night-showers"></i>`,
+        "65": `<i class="wi wi-night-rain"></i>`,
+        "66": `<i class="wi-night-sleet"></i>`,
+        "67": `<i class="wi-night-sleet"></i>`,
+        "71": `<i class="wi wi-night-snow"></i>`,
+        "73": `<i class="wi wi-night-snow"></i>`,
+        "75": `<i class="wi wi-night-snow"></i>`,
+        "77": `<i class="wi wi-night-snow"></i>`,
+        "80": `<i class="wi wi-night-rain"></i>`,
+        "81": `<i class="wi wi-night-rain"></i>`,
+        "82": `<i class="wi wi-night-rain"></i>`,
+        "85": `<i class="wi wi-night-snow-wind"></i>`,
+        "86": `<i class="wi wi-night-snow-wind"></i>`,
+        "95": `<i class="wi wi-night-thunderstorm"></i>`,
+        "96": `<i class="wi wi-night-thunderstorm"></i>`,
+        "99": `<i class="wi wi-night-thunderstorm"></i>`
+    }
+}
 // Caroussel DOM
 const standby_caroussel = $className("stand-by-screen-caroussel")[0]
 const standby_caroussel_children = standby_caroussel.children
@@ -98,13 +162,7 @@ function applyColorPaletteModern() {
         cpmid = 0
     }
     let palette = color_palette_modern[cpmid]
-
-    modern_hour_tens.style.color = palette
-    modern_hour_ones.style.color = palette
-    modern_dots.style.color = palette
-    modern_minutes_tens.style.color = palette
-    modern_minutes_ones.style.color = palette
-
+    document.documentElement.style.setProperty("--palette-modern-color", palette);
 }
 
 function applyColorPaletteClassic() {
@@ -148,6 +206,58 @@ function updatePlayfulAndModernClock() {
         playful_hour_ones.innerHTML = hours[1]
         modern_hour_ones.innerHTML = hours[1]
     }
+
+    document.querySelector(".month").innerHTML = now.toLocaleString('default', { month: 'short' }).toUpperCase();
+    document.querySelector(".day").innerHTML = now.getDate();
+    document.querySelector(".year").innerHTML = now.getFullYear();
+    document.querySelector(".day-name").innerHTML = now.toLocaleString('default', { weekday: 'short' }).toUpperCase();
+}
+
+function updateWaetherModernClock() {
+    // 0 	Clear sky
+    // 1, 2, 3 	Mainly clear, partly cloudy, and overcast
+    // 45, 48 	Fog and depositing rime fog
+    // 51, 53, 55 	Drizzle: Light, moderate, and dense intensity
+    // 56, 57 	Freezing Drizzle: Light and dense intensity
+    // 61, 63, 65 	Rain: Slight, moderate and heavy intensity
+    // 66, 67 	Freezing Rain: Light and heavy intensity
+    // 71, 73, 75 	Snow fall: Slight, moderate, and heavy intensity
+    // 77 	Snow grains
+    // 80, 81, 82 	Rain showers: Slight, moderate, and violent
+    // 85, 86 	Snow showers slight and heavy
+    // 95 * 	Thunderstorm: Slight or moderate
+    // 96, 99 * 	Thunderstorm with slight and heavy hail
+
+    if (!navigator.geolocation) {
+        console.log("Geolocation is not available")
+        document.querySelector(".weather-icon").innerHTML = ""
+        document.querySelector(".temperature").innerHTML = ""
+        return
+    }
+
+    let lat, lon = navigator.geolocation.getCurrentPosition((position) => {
+
+        lat = position.coords.latitude
+        lon = position.coords.longitude
+
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,is_day,weather_code&forecast_days=1`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                let weather_code = data.current.weather_code
+                let temperature = data.current.temperature_2m
+                let is_day = data.current.is_day === 1 ? "day" : "night"
+                let icon = weather_icons[is_day][weather_code]
+                document.querySelector(".weather-icon").innerHTML = icon
+                document.querySelector(".temperature").innerHTML = `${temperature} °C`
+
+            })
+            .catch(error => {
+                document.querySelector(".weather-icon").innerHTML = ""
+                document.querySelector(".temperature").innerHTML = ""
+                console.error(error)
+            })
+    })
 }
 
 function updatePlayfulAndModernClockStyle() {
@@ -202,7 +312,9 @@ function init() {
     updatePlayfulAndModernClock();
     updateClassicClock();
     updatePlayfulAndModernClockStyle();
+    updateWaetherModernClock();
     startSyncedInterval(1000, updateClassicClock);
+    startSyncedInterval(1000, updatePlayfulAndModernClock);
     startSyncedInterval(1000, updatePlayfulAndModernClock);
     startSyncedInterval(60000, updatePlayfulAndModernClockStyle);
     initSwipeFunctions();
@@ -227,7 +339,7 @@ let swipedY = 0;
 let endY = 0;
 let translateY = 0;
 let touchstart = false;
-const threshold = 0.25;
+const threshold = 0.10;
 const threshold_screen_height = window.innerHeight * threshold;
 const max_screen_height = window.innerHeight * (standby_caroussel_children.length - 1)
 let swipe_direction = 0;
