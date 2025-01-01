@@ -318,6 +318,53 @@ function init() {
     startSyncedInterval(1000, updatePlayfulAndModernClock);
     startSyncedInterval(60000, updatePlayfulAndModernClockStyle);
     initSwipeFunctions();
+    initCalendar();
+}
+
+function initCalendar() {
+    const calendar = document.querySelector('.calendar');
+
+    function updateCalendar() {
+        const now = new Date();
+        const day = now.getDay();
+        const date = now.getDate();
+        const year = now.getFullYear();
+
+        // get the length of the month in days
+        const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
+        calendar.innerHTML = `
+        <div class="calendar-header">
+            <div class="calendar-month">${now.toLocaleString('default', { month: 'long' })}</div>
+            <div class="calendar-year">${year}</div>
+        </div>
+            <div class="calendar-weekdays">
+                <span class="calendar-weekday-monday">M</span>
+                <span class="calendar-weekday-tuesday">D</span>
+                <span class="calendar-weekday-wednesday">M</span>
+                <span class="calendar-weekday-thursday">D</span>
+                <span class="calendar-weekday-friday">F</span>
+                <span class="calendar-weekday-saturday">S</span>
+                <span class="calendar-weekday-sunday">S</span>
+            </div>
+            <div class="calendar-dates">
+                ${Array.from({ length: lastDay + day }).map((_, i) => {
+                    const d = new Date(now);
+                    d.setDate(date - day + i);
+                    if (i<day){
+                        return `<div class="calendar-date calendar-date-empty"></div>`;
+                    }
+                    return `
+                            <div class="calendar-date ${i === day ? 'calendar-date-today' : ''}">
+                                <span class="calendar-date-number">${d.getDate()}</span>
+                            </div>
+                        `;
+                }   ).join('')}          
+            </div>
+        `;
+    }
+
+    updateCalendar();
+    startSyncedInterval(60000, updateCalendar);
 }
 
 
