@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Modak&display=swap');
 
 #playful>.time-wrapper {
     display: flex;
@@ -10,6 +11,7 @@
     margin: -1.5rem;
     padding: 0;
     font-family: 'Alata', 'Arial', sans-serif;
+    /* font-family: "Modak", serif; */
     font-weight: bold;
     font-size: clamp(20rem, 22rem, 24rem);
     transition: 1s;

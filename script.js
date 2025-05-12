@@ -310,15 +310,15 @@ function init() {
         document.body.classList.add('ios');
     }
     updatePlayfulAndModernClock();
-    updateClassicClock();
+    // updateClassicClock();
     updatePlayfulAndModernClockStyle();
-    updateWaetherModernClock();
+    // updateWaetherModernClock();
     startSyncedInterval(1000, updateClassicClock);
-    startSyncedInterval(1000, updatePlayfulAndModernClock);
+    // startSyncedInterval(1000, updatePlayfulAndModernClock);
     startSyncedInterval(1000, updatePlayfulAndModernClock);
     startSyncedInterval(60000, updatePlayfulAndModernClockStyle);
-    initSwipeFunctions();
-    initCalendar();
+    // initSwipeFunctions();
+    // initCalendar();
 }
 
 function initCalendar() {
@@ -326,11 +326,13 @@ function initCalendar() {
 
     function updateCalendar() {
         const now = new Date();
-        const day = now.getDay();
-        const date = now.getDate();
         const year = now.getFullYear();
+        const month = now.getMonth();
+        const today = now.getDate();
 
-        // get the length of the month in days
+        // Get month details
+        const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 (Sun) - 6 (Sat)
+
         const lastDay = new Date(year, now.getMonth() + 1, 0).getDate();
         calendar.innerHTML = `
         <div class="calendar-header">
@@ -347,19 +349,16 @@ function initCalendar() {
                 <span class="calendar-weekday-sunday">S</span>
             </div>
             <div class="calendar-dates">
-                ${Array.from({ length: lastDay + day }).map((_, i) => {
-                    const d = new Date(now);
-                    d.setDate(date - day + i);
-                    if (i<day){
-                        return `<div class="calendar-date calendar-date-empty"></div>`;
-                    }
-                    return `
-                            <div class="calendar-date ${i === day ? 'calendar-date-today' : ''}">
-                                <span class="calendar-date-number">${d.getDate()}</span>
-                            </div>
-                        `;
-                }   ).join('')}          
-            </div>
+            ${Array.from({ length: firstDayOfMonth }).map(() => `<div class="calendar-date calendar-date-empty"></div>`).join('')}
+            ${Array.from({ length: lastDay }).map((_, i) => {
+                const dayNumber = i + 1;
+                return `
+                    <div class="calendar-date ${dayNumber === today ? 'calendar-date-today' : ''}">
+                        <span class="calendar-date-number">${dayNumber}</span>
+                    </div>
+                `;
+            }).join('')}
+        </div>
         `;
     }
 
