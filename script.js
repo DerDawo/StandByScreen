@@ -174,46 +174,64 @@ function applyColorPaletteClassic() {
     document.documentElement.style.setProperty("--palette-color", palette);
 }
 
-function updatePlayfulAndModernClock() {
+function updatePlayfulTime() {
     const now = new Date();
     const hours = String(now.getHours());
     const minutes = String(now.getMinutes());
 
     if (minutes.length == 1) {
-        modern_minutes_tens.innerHTML = "0"
         playful_minutes_tens.innerHTML = "0"
-        modern_minutes_ones.innerHTML = minutes[0]
         playful_minutes_ones.innerHTML = minutes[0]
     }
 
     if (hours.length == 1) {
         playful_hour_tens.innerHTML = "0"
-        modern_hour_tens.innerHTML = "0"
         playful_hour_ones.innerHTML = hours[0]
-        modern_hour_ones.innerHTML = hours[0]
     }
 
     if (minutes.length == 2) {
-        modern_minutes_tens.innerHTML = minutes[0]
         playful_minutes_tens.innerHTML = minutes[0]
-        modern_minutes_ones.innerHTML = minutes[1]
         playful_minutes_ones.innerHTML = minutes[1]
     }
 
     if (hours.length == 2) {
         playful_hour_tens.innerHTML = hours[0]
-        modern_hour_tens.innerHTML = hours[0]
         playful_hour_ones.innerHTML = hours[1]
+    }
+}
+
+function updateModernClockTime(){
+    const now = new Date();
+    const hours = String(now.getHours());
+    const minutes = String(now.getMinutes());
+    
+    if (minutes.length == 1) {
+        modern_minutes_tens.innerHTML = "0"
+        modern_minutes_ones.innerHTML = minutes[0]
+    }
+    
+    if (hours.length == 1) {
+        modern_hour_tens.innerHTML = "0"
+        modern_hour_ones.innerHTML = hours[0]
+    }
+    
+    if (minutes.length == 2) {
+        modern_minutes_tens.innerHTML = minutes[0]
+        modern_minutes_ones.innerHTML = minutes[1]
+    }
+    
+    if (hours.length == 2) {
+        modern_hour_tens.innerHTML = hours[0]
         modern_hour_ones.innerHTML = hours[1]
     }
-
+    
     document.querySelector(".month").innerHTML = now.toLocaleString('default', { month: 'short' }).toUpperCase();
     document.querySelector(".day").innerHTML = now.getDate();
     document.querySelector(".year").innerHTML = now.getFullYear();
     document.querySelector(".day-name").innerHTML = now.toLocaleString('default', { weekday: 'short' }).toUpperCase();
 }
 
-function updateWaetherModernClock() {
+function updateModernClockWeather() {
     // 0 	Clear sky
     // 1, 2, 3 	Mainly clear, partly cloudy, and overcast
     // 45, 48 	Fog and depositing rime fog
@@ -260,12 +278,12 @@ function updateWaetherModernClock() {
     })
 }
 
-function updatePlayfulAndModernClockStyle() {
+function updatePlayfulStyle() {
     applyRandomRotationPlayful()
     applyColorPalettePlayful()
 }
 
-function updateClassicClock() {
+function updateClassicTime() {
     const now = new Date();
     const seconds = now.getSeconds();
     const minutes = now.getMinutes();
@@ -286,11 +304,6 @@ function animateCarousselSwipe() {
     }, 500)
 }
 
-function applyColorStylePlayful() {
-    applyColorPalettePlayful()
-    applyRandomRotationPlayful()
-}
-
 // a function, which gets an element and searches in it's parents a specific element by id
 // if non found return false
 function findParentById(element, id) {
@@ -309,14 +322,14 @@ function init() {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
         document.body.classList.add('ios');
     }
-    updatePlayfulAndModernClock();
-    // updateClassicClock();
-    updatePlayfulAndModernClockStyle();
-    // updateWaetherModernClock();
-    startSyncedInterval(1000, updateClassicClock);
-    // startSyncedInterval(1000, updatePlayfulAndModernClock);
-    startSyncedInterval(1000, updatePlayfulAndModernClock);
-    startSyncedInterval(60000, updatePlayfulAndModernClockStyle);
+    updatePlayfulTime();
+    updatePlayfulStyle();
+    // updateClassicTime();
+    // updateModernTime();
+    // updateModernClockWeather();
+    // startSyncedInterval(1000, updateClassicTime);
+    startSyncedInterval(1000, updatePlayfulTime);
+    startSyncedInterval(60000, updatePlayfulStyle);
     // initSwipeFunctions();
     // initCalendar();
 }
@@ -372,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 $id("playful").addEventListener("click", function () {
-    applyColorStylePlayful()
+    updatePlayfulStyle()
 })
 
 $id("classic-clock").addEventListener("click", function () {
@@ -419,7 +432,7 @@ function initSwipeFunctions() {
             if (swipe_end - swipe_start < 100) {
                 standby_caroussel.style.transform = `translateY(${translateY}px)`
                 if (findParentById(touch_target, "playful")) {
-                    applyColorStylePlayful()
+                    updatePlayfulStyle()
                 }
                 if (findParentById(touch_target, "modern")) {
                     applyColorPaletteModern()
