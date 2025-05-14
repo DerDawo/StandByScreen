@@ -1,4 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Modak&display=swap');
+@font-face {
+  font-family: 'SF-Compact-Rounded-Heavy';
+  src: url('./src/SF-Compact-Rounded-Heavy.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
 
 #playful>.time-wrapper {
     display: flex;
@@ -10,9 +15,7 @@
 #playful>.time-wrapper>.time {
     margin: -1.5rem;
     padding: 0;
-    font-family: 'Alata', 'Arial', sans-serif;
-    /* font-family: "Modak", serif; */
-    font-weight: bold;
+    font-family: 'SF-Compact-Rounded-Heavy', 'Arial', sans-serif;
     font-size: clamp(20rem, 22rem, 24rem);
     transition: 1s;
     text-shadow: #000000 2px 2px 10px;
@@ -21,10 +24,4 @@
 #playful>.time-wrapper>.dots {
     margin: -0.5rem;
     transform: translate(0, -2rem);
-}
-
-
-/* Apply Arial font on iOS devices */
-body.ios #playful>.time-wrapper>.time {
-    font-family: 'Arial', sans-serif;
 }
