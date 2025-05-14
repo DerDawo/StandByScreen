@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -7,9 +8,6 @@
     <meta name="description" content="Stand By Screen for any device">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="classic_clock.css">
-    <link rel="stylesheet" href="playful_clock.css">
-    <link rel="stylesheet" href="modern_clock.css">
     <link rel="stylesheet" href="./libs/weather-icons-master/css/weather-icons.css">
     <script src="script.js" defer></script>
 
@@ -47,7 +45,7 @@
     <meta name="nightmode" content="enable/disable">
 
     <!-- Fitscreen  -->
-    <meta name="viewport" content="uc-fitscreen=yes"/>
+    <meta name="viewport" content="uc-fitscreen=yes" />
 
     <!-- Layout mode -->
     <meta name="layoutmode" content="fitscreen/standard">
@@ -92,47 +90,52 @@
 
 
 </head>
+
 <body>
-    <div class="stand-by-screen-caroussel" id="stand-by-screen-caroussel">
-        <div class="stand-by-screen-wrapper" id="playful" >
-            <div class="time-wrapper">
-                <p class="time hour-tens">0</p>        
-                <p class="time hour-ones">0</p>        
-                <p class="time dots">:</p>        
-                <p class="time minute-tens">0</p>        
-                <p class="time minute-ones">0</p>        
+    <div class="stand-by-screen-wrapper" id="playful">
+        <div class="time-wrapper">
+            <div class="time hour-tens">
+                <p>0</p>
+                <p>1</p>
+                <p>2</p>
             </div>
-        </div>
-        <div class="stand-by-screen-wrapper" id="modern">
-            <div class="time-wrapper">
-                <span class="time hour-tens">0</span>        
-                <span class="time hour-ones">0</span>        
-                <span class="time dots">:</span>        
-                <span class="time minute-tens">0</span>        
-                <span class="time minute-ones">0</span>        
+            <div class="time hour-ones">
+                <p>0</p>
+                <p>1</p>
+                <p>2</p>
+                <p>3</p>
+                <p>4</p>
+                <p>5</p>
+                <p>6</p>
+                <p>7</p>
+                <p>8</p>
+                <p>9</p>
             </div>
-            <div class="information">
-                <span class="month"></span>
-                <span class="year"></span>
-                <span class="day-name"></span>
-                <span class="day"></span>
-                <span class="weather-icon"></span>
-                <span class="temperature"></span>
+            <div class="time dots">
+                <p>:</p>
             </div>
-        </div>
-        <div class="stand-by-screen-wrapper" id="classic">
-            <div class="time-wrapper" id="classic-clock">
-                <div class="clock-body">
-                    <div class="hours"></div>
-                    <div class="hand second"></div>
-                    <div class="hand minute"></div>
-                    <div class="hand hour"></div>
-                </div>
+            <div class="time minute-tens">
+                <p>0</p>
+                <p>1</p>
+                <p>2</p>
+                <p>3</p>
+                <p>4</p>
+                <p>5</p>
             </div>
-            <div class="calendar">
-                
+            <div class="time minute-ones">
+                <p>0</p>
+                <p>1</p>
+                <p>2</p>
+                <p>3</p>
+                <p>4</p>
+                <p>5</p>
+                <p>6</p>
+                <p>7</p>
+                <p>8</p>
+                <p>9</p>
             </div>
         </div>
     </div>
 </body>
+
 </html>
