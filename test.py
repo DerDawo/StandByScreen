@@ -3,7 +3,7 @@ from PIL import Image
 import os
 
 # Ursprungspfad und Zielordner
-input_image = "icon-512x512.png"
+input_image = "icon.png"
 output_folder = "./images/icons/"
 
 # Sicherstellen, dass der Zielordner existiert
@@ -32,7 +32,7 @@ for icon in manifest.get("icons", []):
         continue
 
     width, height = map(int, sizes.split('x'))
-    resized_img = img.resize((width, height), Image.ANTIALIAS)  # Bildgröße ändern
+    resized_img = img.resize((width, height))  # Bildgröße ändern
     output_path = os.path.join(output_folder, f"icon-{width}x{height}.png")
     resized_img.save(output_path, format="PNG")
     print(f"Gespeichert: {output_path}")
