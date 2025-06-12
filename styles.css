@@ -118,9 +118,50 @@ body {
     opacity: 0;
 }
 
+.back{
+    height: 50px;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    right: 190px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s;
+}
+
+.back.show{
+    opacity: 1;
+    pointer-events: unset;
+}
+
+.back:hover{
+    background-color: #0000004b;
+}
+
+.back:active{
+    background-color: #0000008e;
+}
+
+.back > label{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+}
+
+
 .main-menu{
     display: flex;
     flex-direction: column;
+    transition: 0.5s;
 }
 
 .main-menu button{
@@ -147,8 +188,114 @@ body {
 }
 
 .sub-menu{
-    display: none;
+    position: fixed;
+    z-index: 2;
+    width: 240px;
+    right: -240px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.5s;
+    pointer-events: none;
 }
+
+.sub-menu.show{
+    pointer-events: unset;
+    right: 0;
+}
+
+.sub-menu-category{
+    display: none;
+    font-family: 'SF-Compact-Rounded-Regular';
+    font-size: 13px;
+}
+
+.sub-menu-category.show{
+    display: unset;
+}
+
+.sub-menu-container{
+    min-height: 48px;
+    width: calc(100% - 2px);
+    padding: 2px 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sub-menu-button{
+    background-color: #00000000;
+    color: white;
+    border: 0;
+    height: 100%;
+    transition: 0.2s;
+    cursor: pointer;
+    font-family: 'SF-Compact-Rounded-Regular';
+}
+
+.sub-menu-button:hover{
+    background-image: linear-gradient(90deg, #00000000, #0000004b, black);
+}
+
+.sub-menu-button:active{
+    background-image: linear-gradient(90deg, #00000000, #0000008e, black);
+}
+
+.checkbox-container{
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    gap: 5px;
+}
+
+.main-menu.hide{
+    opacity: 0;
+    pointer-events: none;
+}
+
+/*Color Palette Container*/
+.color-palette-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.palette{
+  border-radius: 4px;
+  background-color: white;
+  padding:2px;
+  display:flex;
+  gap:2px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: 0.2s;
+  border: 2px solid #000000;
+  outline: 2px solid #00000000;
+}
+
+.palette:hover{
+  opacity: 1;
+}
+
+.palette:active{
+  opacity: .8;
+}
+
+.palette-checkbox:checked + .palette{
+  opacity: 1;
+  outline: 2px solid white;
+}
+
+.palette-checkbox{
+  display: none;
+}
+
+.palette div{
+  width: 16px;
+  height: 16px;
+}
+
 
 /*Time*/
 .stand-by-screen-wrapper {

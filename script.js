@@ -16,17 +16,20 @@ const color_palette_playful = [
     ["#ffee70dd", "#ffec5cdd", "#ffe747dd", "#ffe433dd", "#ffdd1fdd"] //yellow
 ]
 
+
 // global settings
 let style_interval;
 let color_interval;
-let rotation_interval; 
+let rotation_interval;
 
 let style_interval_time = 60000;
 let color_interval_time = 60000;
-let rotation_interval_time = 60000; 
+let rotation_interval_time = 60000;
 
 let random_color_change_enabled = true;
 let random_rotation_change_enabled = true;
+
+const active_color_palettes = [1,1,1,1,1,1,1];
 
 function $id(id) { return document.getElementById(id) };
 function getRandomNumber(min, max) { return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min) };
@@ -179,29 +182,134 @@ $id("playful").addEventListener("click", function () {
 })
 
 const menu_button = $id("toggle-menu")
-const menu = $id("menu") 
+const menu = $id("menu")
 let menu_button_clicked = false;
 
-function showMenuButton(){
+function showMenuButton() {
     menu.classList.add("show")
-    setTimeout(()=>{
-        if (menu_button_clicked){
+    setTimeout(() => {
+        if (menu_button_clicked) {
             return
         }
-        hideMenuButton()
+        hideMenu()
     }, 10000)
 }
 
-function hideMenuButton(){
+function hideMenu() {
     menu.classList.remove("show")
 }
 
-menu_button.addEventListener("change",(event)=>{
+menu_button.addEventListener("change", (event) => {
     const menu_opened = event.target.checked
-    if(menu_opened){
+    if (menu_opened) {
         menu_button_clicked = true
     } else {
         menu_button_clicked = false
-        hideMenuButton()
+        if (clicked_sub_menu_button.length > 0){
+            back_to_main_menu()
+        }
+        hideMenu()
     }
 })
+
+
+const sub_menu = document.getElementsByClassName("sub-menu")[0]
+const main_menu = document.getElementsByClassName("main-menu")[0]
+const main_menu_button = document.getElementsByClassName("main-menu-button")
+const color_sub_menu = document.getElementById("color-sub-menu")
+const rotation_sub_menu = document.getElementById("rotation-sub-menu")
+const credits_sub_menu = document.getElementById("credits-sub-menu")
+const back_menu = document.getElementsByClassName("back")[0]
+
+let clicked_sub_menu_button = "";
+
+function main_menu_button_clicked(e) {
+    clicked_sub_menu_button = e.target.value
+    if (clicked_sub_menu_button == "color" || clicked_sub_menu_button == "rotation" || clicked_sub_menu_button == "credits") {
+        hide_main_menu()
+        setTimeout(() => {
+            show_sub_menu()
+        }, 250)
+    }
+    if (clicked_sub_menu_button == "color") {
+        show_color_sub_menu()
+    }
+    if (clicked_sub_menu_button == "rotation") {
+        show_rotation_sub_menu()
+    }
+    if (clicked_sub_menu_button == "credits") {
+        show_credits_sub_menu()
+    }
+    if (clicked_sub_menu_button == "color" || clicked_sub_menu_button == "rotation" || clicked_sub_menu_button == "credits") {
+        show_back_menu_button()
+    } else {
+        hide_back_menu_button()
+    }
+}
+
+function show_main_menu() {
+    main_menu.classList.remove("hide")
+}
+
+function hide_main_menu() {
+    main_menu.classList.add("hide")
+}
+
+function show_sub_menu() {
+    sub_menu.classList.add("show")
+}
+
+function hide_sub_menu() {
+    sub_menu.classList.remove("show")
+}
+
+
+function show_color_sub_menu() {
+    color_sub_menu.classList.add("show")
+}
+
+function hide_color_sub_menu() {
+    color_sub_menu.classList.remove("show")
+}
+
+function show_rotation_sub_menu() {
+    rotation_sub_menu.classList.add("show")
+}
+
+function hide_rotation_sub_menu() {
+    rotation_sub_menu.classList.remove("show")
+}
+
+function show_credits_sub_menu() {
+    credits_sub_menu.classList.add("show")
+}
+
+function hide_credits_sub_menu() {
+    credits_sub_menu.classList.remove("show")
+}
+
+
+function show_back_menu_button() {
+    back_menu.classList.add("show")
+}
+
+function hide_back_menu_button() {
+    back_menu.classList.remove("show")
+}
+
+back_menu.addEventListener("click", back_to_main_menu)
+function back_to_main_menu() {
+    clicked_sub_menu_button = ""
+    hide_back_menu_button()
+    hide_sub_menu()
+    setTimeout(() => {
+        show_main_menu()
+        hide_color_sub_menu()
+        hide_rotation_sub_menu()
+        hide_credits_sub_menu()
+    }, 500)
+}
+
+for (const mmb of main_menu_button) {
+    mmb.addEventListener("click", main_menu_button_clicked)
+}

@@ -79,7 +79,9 @@
     <link rel="manifest" href="./manifest.json">
 
     <!-- FontAwesom -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -91,48 +93,138 @@
                 <i class="fa-solid fa-xmark" id="close-menu"></i>
             </label>
         </div>
+        <div class="back">
+            <label>
+                <i class="fa-solid fa-chevron-left"></i>
+            </label>
+        </div>
         <div class="main-menu">
             <div class="divider"></div>
-            <button>
+            <button class="main-menu-button" value="color" id="main-menu-color-button">
                 Color
             </button>
             <div class="divider"></div>
-            <button>
+            <button class="main-menu-button" value="rotation" id="main-menu-rotatio-button">
                 Rotation
             </button>
             <div class="divider"></div>
-            <button>
+            <button class="main-menu-button" value="reset" id="main-menu-reset-button">
                 Reset
             </button>
             <div class="divider"></div>
-            <button>
+            <button class="main-menu-button" value="credits" id="main-menu-credits-button">
                 Credits
             </button>
             <div class="divider"></div>
         </div>
         <div class="sub-menu">
             <div class="sub-menu-category" id="color-sub-menu">
-                <input type="checkbox">
-                <label>Random Color Rotation Enabled</label>
-                <input type="number">
-                <label>Color Rotation Interval</label>
-                <label>Color Palettes</label>
-                <button>Straigthen Digits</button>
-                <button>Reset</button>
+                <div class="divider"></div>
+                <div class="sub-menu-container checkbox-container">
+                    <label>Random Color Rotation Enabled</label>
+                    <input type="checkbox">
+                </div>
+                <div class="divider"></div>
+                <div class="sub-menu-container checkbox-container">
+                    <label>Color Rotation Interval</label>
+                    <input type="number">
+                </div>
+                <div class="divider"></div>
+                <div class="sub-menu-container">
+                    <label>Color Palettes</label>
+                    <div class="color-palette-container">
+                        <input type="checkbox" id="color-palette-orange" class="palette-checkbox">
+                        <label class="palette" for="color-palette-orange">
+                            <div style="background-color: #cc5803dd;"></div>
+                            <div style="background-color: #e2711ddd;"></div>
+                            <div style="background-color: #ff9505dd;"></div>
+                            <div style="background-color: #ffb627dd;"></div>
+                            <div style="background-color: #ffc971dd;"></div>
+                        </label>
+                        <input type="checkbox" id="color-palette-purple" class="palette-checkbox">
+                        <label class="palette" for="color-palette-purple">
+                            <div style="background-color: #ffd6ffdd;"></div>
+                            <div style="background-color: #e7c6ffdd;"></div>
+                            <div style="background-color: #c8b6ffdd;"></div>
+                            <div style="background-color: #b8c0ffdd;"></div>
+                            <div style="background-color: #bbd0ffdd;"></div>
+                        </label>
+                        <input type="checkbox" id="color-palette-coral" class="palette-checkbox">
+                        <label class="palette" for="color-palette-coral">
+                            <div style="background-color: #f08080dd;"></div>
+                            <div style="background-color: #f4978edd;"></div>
+                            <div style="background-color: #f8ad9ddd;"></div>
+                            <div style="background-color: #fbc4abdd;"></div>
+                            <div style="background-color: #ffdab9dd;"></div>
+                        </label>
+                        <input type="checkbox" id="color-palette-green" class="palette-checkbox">
+                        <label class="palette" for="color-palette-green">
+                            <div style="background-color: #d8f3dcdd;"></div>
+                            <div style="background-color: #b7e4c7dd;"></div>
+                            <div style="background-color: #95d5b2dd;"></div>
+                            <div style="background-color: #74c69ddd;"></div>
+                            <div style="background-color: #52b788dd;"></div>
+                        </label>
+                        <input type="checkbox" id="color-palette-blue" class="palette-checkbox">
+                        <label class="palette" for="color-palette-blue">
+                            <div style="background-color: #d7e3fcdd;"></div>
+                            <div style="background-color: #ccdbfddd;"></div>
+                            <div style="background-color: #c1d3fedd;"></div>
+                            <div style="background-color: #b6ccfedd;"></div>
+                            <div style="background-color: #abc4ffdd;"></div>
+                        </label>
+                        <input type="checkbox" id="color-palette-pink" class="palette-checkbox">
+                        <label class="palette" for="color-palette-pink">
+                            <div style="background-color: #ff0a54dd;"></div>
+                            <div style="background-color: #ff477edd;"></div>
+                            <div style="background-color: #ff5c8add;"></div>
+                            <div style="background-color: #ff7096dd;"></div>
+                            <div style="background-color: #ff85a1dd;"></div>
+                        </label>
+                        <input type="checkbox" id="color-palette-yellow" class="palette-checkbox">
+                        <label class="palette" for="color-palette-yellow">
+                            <div style="background-color: #ffee70dd;"></div>
+                            <div style="background-color: #ffec5cdd;"></div>
+                            <div style="background-color: #ffe747dd;"></div>
+                            <div style="background-color: #ffe433dd;"></div>
+                            <div style="background-color: #ffdd1fdd;"></div>
+                        </label>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="sub-menu-container">
+                    <button class="sub-menu-button">Reset</button>
+                </div>
+                <div class="divider"></div>
             </div>
             <div class="sub-menu-category" id="rotation-sub-menu">
-                <input type="checkbox">
-                <label>Random Digit Rotation Enabled</label>
-                <input type="number">
-                <label>Digit Rotation Interval</label>
-                <button>Straigthen Digits</button>
-                <button>Reset</button>
+                <div class="divider"></div>
+                <div class="sub-menu-container checkbox-container">
+                    <label>Random Digit Rotation Enabled</label>
+                    <input type="checkbox">
+                </div>
+                <div class="divider"></div>
+                <div class="sub-menu-container checkbox-container">
+                    <label>Digit Rotation Interval</label>
+                    <input type="number">
+                </div>
+                <div class="divider"></div>
+                <div class="sub-menu-container">
+                    <button class="sub-menu-button">Straigthen Digits</button>
+                </div>
+                <div class="divider"></div>
+                <div class="sub-menu-container">
+                    <button class="sub-menu-button">Reset</button>
+                </div>
+                <div class="divider"></div>
             </div>
             <div class="sub-menu-category" id="reset-sub-menu">
 
             </div>
             <div class="sub-menu-category" id="credits-sub-menu">
-
+                Desing inspired by Apple StandBy
+                <br>
+                Author: Me
             </div>
         </div>
     </div>
