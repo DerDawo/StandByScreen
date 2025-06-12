@@ -249,6 +249,12 @@ body {
     gap: 5px;
 }
 
+.select-container{
+    display: grid;
+    grid-template-columns: 1fr 100px;
+    gap: 5px;
+}
+
 .main-menu.hide{
     opacity: 0;
     pointer-events: none;
