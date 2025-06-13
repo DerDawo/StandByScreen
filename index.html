@@ -8,6 +8,7 @@
     <meta name="description" content="Stand By Screen for any device">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="checkbox.css">
     <script src="script.js" defer></script>
 
     <meta name="application-name" content="StandByScreen">
@@ -79,7 +80,7 @@
     <link rel="manifest" href="./manifest.json">
 
     <!-- FontAwesom -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.m.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -118,21 +119,25 @@
                 <div class="divider"></div>
                 <div class="sub-menu-container checkbox-container">
                     <label for="random-color-rotation-checkbox">Random Color Rotation Enabled</label>
-                    <input type="checkbox" id="random-color-rotation-checkbox" name="random-color-rotation-checkbox">
+                    <label class="container">
+                        <input type="checkbox" id="random-color-rotation-checkbox"
+                            name="random-color-rotation-checkbox">
+                        <span class="checkmark"></span>
+                    </label>
                 </div>
                 <div class="divider"></div>
                 <div class="sub-menu-container select-container">
                     <label for="random-color-rotation-interval-select">Color Rotation Interval</label>
                     <select id="random-color-rotation-interval-select" name="random-color-rotation-interval-select">
-                        <option value="5000">5 seconds</option>
-                        <option value="30000">30 seconds</option>
-                        <option value="60000">1 min</option>
-                        <option value="300000">5 min</option>
-                        <option value="600000">10 min</option>
-                        <option value="900000">15 min</option>
-                        <option value="1200000">20 min</option>
-                        <option value="1800000">30 min</option>
-                        <option value="3600000">60 min</option>
+                        <option value="5000">5 s</option>
+                        <option value="30000">30 s</option>
+                        <option value="60000">1 m</option>
+                        <option value="300000">5 m</option>
+                        <option value="600000">10 m</option>
+                        <option value="900000">15 m</option>
+                        <option value="1200000">20 m</option>
+                        <option value="1800000">30 m</option>
+                        <option value="3600000">60 m</option>
                     </select>
                 </div>
                 <div class="divider"></div>
@@ -205,21 +210,25 @@
                 <div class="divider"></div>
                 <div class="sub-menu-container checkbox-container">
                     <label for="random-digit-rotation-checkbox">Random Digit Rotation Enabled</label>
-                    <input type="checkbox" id="random-digit-rotation-checkbox" name="random-digit-rotation-checkbox">
+                    <label class="container">
+                        <input type="checkbox" id="random-digit-rotation-checkbox"
+                            name="random-digit-rotation-checkbox">
+                        <span class="checkmark"></span>
+                    </label>
                 </div>
                 <div class="divider"></div>
                 <div class="sub-menu-container select-container">
                     <label for="random-digit-rotation-interval-select">Digit Rotation Interval</label>
                     <select id="random-digit-rotation-interval-select" name="random-digit-rotation-interval-select">
-                        <option value="5000">5 seconds</option>
-                        <option value="30000">30 seconds</option>
-                        <option value="60000">1 min</option>
-                        <option value="300000">5 min</option>
-                        <option value="600000">10 min</option>
-                        <option value="900000">15 min</option>
-                        <option value="1200000">20 min</option>
-                        <option value="1800000">30 min</option>
-                        <option value="3600000">60 min</option>
+                        <option value="5000">5 s</option>
+                        <option value="30000">30 s</option>
+                        <option value="60000">1 m</option>
+                        <option value="300000">5 m</option>
+                        <option value="600000">10 m</option>
+                        <option value="900000">15 m</option>
+                        <option value="1200000">20 m</option>
+                        <option value="1800000">30 m</option>
+                        <option value="3600000">60 m</option>
                     </select>
                 </div>
                 <div class="divider"></div>
