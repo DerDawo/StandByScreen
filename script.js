@@ -1,4 +1,5 @@
 // playful clock DOM elements
+const playful_clock = $id("playful");
 const playful_hour_tens = $id("playful").getElementsByClassName("time")[0]
 const playful_hour_ones = $id("playful").getElementsByClassName("time")[1]
 const playful_dots = $id("playful").getElementsByClassName("time")[2]
@@ -11,6 +12,9 @@ const random_color_rotation_interval_select = $id("random-color-rotation-interva
 const palette_checkboxes = document.getElementsByClassName("palette-checkbox");
 const random_digit_rotation_checkbox = $id("random-digit-rotation-checkbox");
 const random_digit_rotation_interval_select = $id("random-digit-rotation-interval-select");
+const reset_color_settings_button = $id("reset-color-settings-button");
+const straighten_digits_button = $id("straighten-digits-button");
+const reset_rotation_settings_button = $id("reset-rotation-settings-button");
 
 // color palettes
 const color_palette_playful = [
@@ -23,13 +27,15 @@ const color_palette_playful = [
     ["#ffee70dd", "#ffec5cdd", "#ffe747dd", "#ffe433dd", "#ffdd1fdd"] //yellow
 ]
 
+const no_palette = "#ffffffdd" // white
+
 // standard settings
 const standard_style_interval_time = 60000;
 const standard_color_interval_time = 60000;
 const standard_rotation_interval_time = 60000;
 const standard_random_color_change_enabled = true;
 const standard_random_rotation_change_enabled = true;
-const standard_active_color_palettes = [1,0,0,0,0,0,1];
+const standard_active_color_palettes = [1,1,1,1,1,1,1];
 
 // global settings
 let color_interval;
@@ -50,6 +56,7 @@ let init_settings = false;
 // utility functions
 function $id(id) { return document.getElementById(id) };
 function getRandomNumber(min, max) { return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min) };
+function getRandomItem(list) { return list[Math.floor(Math.random() * list.length)] };
 
 // function to start a synced interval
 /**
@@ -98,22 +105,28 @@ function applyRandomRotation() {
 }
 
 function applyRandomColorPalette() {
-    let id = getRandomNumber(0, color_palette_playful.length - 1)
-    
+
     // ensures that the selected is always an active on
-    while ((active_color_palettes[id] === 0)) {
-        id = getRandomNumber(0, color_palette_playful.length - 1);
-    }
-    
+    let active_color_palette_indexes = active_color_palettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
+
+    let id = getRandomItem(active_color_palette_indexes)
+
     // ensures that the selected palette is not the same as the previous one, 
     // when there is more then one active color
     if ((color_palette_id) && (active_color_palettes.filter((num)=>{num===1}).length > 1)){
         while ((id === color_palette_id)) {
-            id = getRandomNumber(0, color_palette_playful.length - 1);
+            id = getRandomItem(active_color_palette_indexes);
         }
     }
 
-    // this two conditions ovveride each other, we need a workaround
+    if (id === undefined){
+        playful_hour_tens.style.color = no_palette
+        playful_hour_ones.style.color = no_palette
+        playful_dots.style.color = no_palette
+        playful_minutes_tens.style.color = no_palette
+        playful_minutes_ones.style.color = no_palette
+        return
+    }
 
     color_palette_id = id;
     let palette = color_palette_playful[color_palette_id];
@@ -185,6 +198,31 @@ function applyGlobalSettingsInDOM() {
     init_settings = true;
 }
 
+// the reset function need extra work
+function resetColorSettings(){
+    random_color_rotation_interval_select.value = standard_color_interval_time;
+    random_color_rotation_checkbox.checked = standard_random_color_change_enabled;
+    for (const pc of palette_checkboxes){
+        pc.checked = true;
+    }
+}
+
+function resetRotationSettings(){
+    random_digit_rotation_interval_select.value = standard_rotation_interval_time;
+    random_digit_rotation_checkbox.checked = standard_random_rotation_change_enabled;
+    applyZeroRotation();
+}
+
+function playful_clock_clicked(){
+    if (random_color_change_enabled) {
+        applyRandomColorPalette();
+    }
+    if (random_rotation_change_enabled) {
+        applyRandomRotation();
+    }
+    showMenuButton();
+}
+
 function init() {
     stopColorInterval();
     stopRotationInterval();
@@ -214,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
     init();
 });
 
-$id("playful").addEventListener("click", function () {
+playful_clock.addEventListener("click", function () {
     if (random_color_change_enabled) {
         applyRandomColorPalette()
     }
@@ -259,6 +297,10 @@ random_digit_rotation_interval_select.addEventListener("change", function () {
     }
     rotation_interval = startSyncedInterval(rotation_interval_time, applyRandomRotation);
 })
+
+reset_color_settings_button.addEventListener("click",resetColorSettings)
+straighten_digits_button.addEventListener("click",applyZeroRotation)
+reset_rotation_settings_button.addEventListener("click",resetRotationSettings)
 
 for (const pc of palette_checkboxes){
     pc.addEventListener("change", function (e) {
