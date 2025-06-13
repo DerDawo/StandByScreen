@@ -48,7 +48,7 @@ body {
     transition: 0.5s;
     opacity: 0;
     pointer-events: none;
-}
+text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000;}
 
 .overlay:has(#toggle-menu:not(:checked)){
     right: -240px;
@@ -262,6 +262,10 @@ body {
 }
 
 /*Color Palette Container*/
+.sub-menu-container-color-palettes{
+
+}
+
 .color-palette-container{
     display: grid;
     grid-template-columns: 1fr 1fr;
