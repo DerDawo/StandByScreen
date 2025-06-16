@@ -1,14 +1,7 @@
 @font-face {
-    font-family: 'SF-Compact-Rounded-Heavy';
-    src: url('./src/SF-Compact-Rounded-Heavy.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'SF-Compact-Rounded-Regular';
-    src: url('./src/SF-Compact-Rounded-Regular.otf') format('opentype');
-    font-weight: normal;
+    font-family: 'Nunito';
+    src: url('./src/Nunito-VariableFont_wght.ttf') format('opentype');
+    font-weight: 900;
     font-style: normal;
 }
 
@@ -48,7 +41,8 @@ body {
     transition: 0.5s;
     opacity: 0;
     pointer-events: none;
-text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000;}
+    text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000;
+}
 
 .overlay:has(#toggle-menu:not(:checked)){
     right: -240px;
@@ -185,7 +179,7 @@ text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 
     height: 50px;
     transition: 0.2s;
     cursor: pointer;
-    font-family: 'SF-Compact-Rounded-Regular';
+    font-family: 'Nunito';
 }
 
 .main-menu button:hover{
@@ -220,7 +214,7 @@ text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 
 
 .sub-menu-category{
     display: none;
-    font-family: 'SF-Compact-Rounded-Regular';
+    font-family: 'Nunito';
     font-size: 13px;
 }
 
@@ -247,7 +241,7 @@ text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 
     width: 100%;
     transition: 0.2s;
     cursor: pointer;
-    font-family: 'SF-Compact-Rounded-Regular';
+    font-family: 'Nunito';
 }
 
 .sub-menu-button:hover{
@@ -278,7 +272,7 @@ text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 
 
 /*Color Palette Container*/
 .sub-menu-container-color-palettes{
-
+padding: 10px 0;
 }
 
 .color-palette-container{
@@ -358,7 +352,7 @@ text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 
     margin-right: -2.75rem;
     line-height: 0;
     padding: 0;
-    font-family: 'SF-Compact-Rounded-Heavy', 'Arial', sans-serif;
+    font-family: 'Nunito', 'Arial', sans-serif;
     font-size: 100dvh;
     transition: 1s;
     text-shadow: #000000 2px 2px 10px;
@@ -405,4 +399,17 @@ text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 
 
 #playful>.time-wrapper>.minute-ones {
     transform: translateY(var(--playful-minute-ones-translation));
+}
+
+/*Credits Sub Menu*/
+#credits-sub-menu {
+    text-align: center;
+}
+
+#credits-sub-menu > a:link {
+    color: white;
+}
+
+#credits-sub-menu > a:visited {
+    color: white;
 }

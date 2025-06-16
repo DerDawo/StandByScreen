@@ -22,8 +22,8 @@ function showMenuButton() {
     }, 10000)
 }
 
-function showMenuOverlay() { menu_overlay.classList.add("show")}
-function hideMenuOverlay() { menu_overlay.classList.remove("show")}
+function showMenuOverlay() { menu_overlay.classList.add("show") }
+function hideMenuOverlay() { menu_overlay.classList.remove("show") }
 
 // main menu globals
 let menu_button_clicked = false;
@@ -36,18 +36,18 @@ const credits_sub_menu = document.getElementById("credits-sub-menu")
 const back_menu = document.getElementsByClassName("back")[0]
 
 // sub menu DOM functions
-function show_main_menu() {main_menu.classList.remove("hide")}
-function hide_main_menu() {main_menu.classList.add("hide")}
-function show_sub_menu() {sub_menu.classList.add("show")}
-function hide_sub_menu() {sub_menu.classList.remove("show")}
-function show_color_sub_menu() {color_sub_menu.classList.add("show")}
-function hide_color_sub_menu() {color_sub_menu.classList.remove("show")}
-function show_rotation_sub_menu() {rotation_sub_menu.classList.add("show")}
-function hide_rotation_sub_menu() {rotation_sub_menu.classList.remove("show")}
-function show_credits_sub_menu() {credits_sub_menu.classList.add("show")}
-function hide_credits_sub_menu() {credits_sub_menu.classList.remove("show")}
-function show_back_menu_button() {back_menu.classList.add("show")}
-function hide_back_menu_button() {back_menu.classList.remove("show")}
+function show_main_menu() { main_menu.classList.remove("hide") }
+function hide_main_menu() { main_menu.classList.add("hide") }
+function show_sub_menu() { sub_menu.classList.add("show") }
+function hide_sub_menu() { sub_menu.classList.remove("show") }
+function show_color_sub_menu() { color_sub_menu.classList.add("show") }
+function hide_color_sub_menu() { color_sub_menu.classList.remove("show") }
+function show_rotation_sub_menu() { rotation_sub_menu.classList.add("show") }
+function hide_rotation_sub_menu() { rotation_sub_menu.classList.remove("show") }
+function show_credits_sub_menu() { credits_sub_menu.classList.add("show") }
+function hide_credits_sub_menu() { credits_sub_menu.classList.remove("show") }
+function show_back_menu_button() { back_menu.classList.add("show") }
+function hide_back_menu_button() { back_menu.classList.remove("show") }
 
 // sub menu globals
 let clicked_sub_menu_button = false;
@@ -344,13 +344,21 @@ menu_button.addEventListener("change", (event) => {
     } else {
         menu_button_clicked = false
         if (clicked_sub_menu_button) {
-            back_to_main_menu()
+            clicked_sub_menu_button = false
+            hide_back_menu_button()
+            hide_sub_menu()
+            setTimeout(() => {
+                show_main_menu()
+                hide_color_sub_menu()
+                hide_rotation_sub_menu()
+                hide_credits_sub_menu()
+            }, 500)
         }
         hideMenuOverlay()
     }
 })
 
-back_menu.addEventListener("click", function(){
+back_menu.addEventListener("click", function () {
     clicked_sub_menu_button = false
     hide_back_menu_button()
     hide_sub_menu()
