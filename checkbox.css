@@ -12,7 +12,7 @@ body{
   -ms-user-select: none;
   user-select: none;
   color: white;
-  transform: translate(-20px, -6px);
+  transform: translate(-24px, -6px);
   justify-self: end;
 }
 
@@ -30,8 +30,8 @@ body{
   position: absolute;
   top: 0;
   left: 0;
-  height: 10px;
-  width: 10px;
+  height: 14px;
+  width: 14px;
   background-color: black;
   border-radius:4px;
   border: 2px solid black;
@@ -62,10 +62,10 @@ body{
 
 /* Style the checkmark/indicator */
 .container .checkmark:after {
-  left: 3px;
+  left: 4px;
   top: 2px;
-  width: 2px;
-  height: 4px;
+  width: 3px;
+  height: 6px;
   border: solid black;
   border-width: 0 2px 2px 0;
   -webkit-transform: rotate(45deg);

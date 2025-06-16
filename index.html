@@ -79,10 +79,6 @@
     <!-- Manifest (for PWA) -->
     <link rel="manifest" href="./manifest.json">
 
-    <!-- FontAwesom -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.m.css"
-        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
@@ -90,13 +86,13 @@
         <div class="toggle">
             <input type="checkbox" id="toggle-menu">
             <label for="toggle-menu">
-                <i class="fa-solid fa-bars" id="open-menu"></i>
-                <i class="fa-solid fa-xmark" id="close-menu"></i>
+                <i id="open-menu">&#8801;</i>
+                <i id="close-menu">	&times;</i>
             </label>
         </div>
         <div class="back">
             <label>
-                <i class="fa-solid fa-chevron-left"></i>
+                <i><div class="chevron"></div></i>
             </label>
         </div>
         <div class="main-menu">
