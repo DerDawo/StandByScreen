@@ -6,7 +6,56 @@ const playful_dots = $id("playful").getElementsByClassName("time")[2]
 const playful_minutes_tens = $id("playful").getElementsByClassName("time")[3]
 const playful_minutes_ones = $id("playful").getElementsByClassName("time")[4]
 
+// main menu DOM elements
+const main_menu = document.getElementsByClassName("main-menu")[0]
+const menu_button = $id("toggle-menu")
+const menu_overlay = $id("menu")
+
+// main menu DOM functions
+function showMenuButton() {
+    showMenuOverlay()
+    setTimeout(() => {
+        if (menu_button_clicked) {
+            return
+        }
+        hideMenuOverlay()
+    }, 10000)
+}
+
+function showMenuOverlay() { menu_overlay.classList.add("show")}
+function hideMenuOverlay() { menu_overlay.classList.remove("show")}
+
+// main menu globals
+let menu_button_clicked = false;
+
+// sub menu DOM elements
+const sub_menu = document.getElementsByClassName("sub-menu")[0]
+const color_sub_menu = document.getElementById("color-sub-menu")
+const rotation_sub_menu = document.getElementById("rotation-sub-menu")
+const credits_sub_menu = document.getElementById("credits-sub-menu")
+const back_menu = document.getElementsByClassName("back")[0]
+
+// sub menu DOM functions
+function show_main_menu() {main_menu.classList.remove("hide")}
+function hide_main_menu() {main_menu.classList.add("hide")}
+function show_sub_menu() {sub_menu.classList.add("show")}
+function hide_sub_menu() {sub_menu.classList.remove("show")}
+function show_color_sub_menu() {color_sub_menu.classList.add("show")}
+function hide_color_sub_menu() {color_sub_menu.classList.remove("show")}
+function show_rotation_sub_menu() {rotation_sub_menu.classList.add("show")}
+function hide_rotation_sub_menu() {rotation_sub_menu.classList.remove("show")}
+function show_credits_sub_menu() {credits_sub_menu.classList.add("show")}
+function hide_credits_sub_menu() {credits_sub_menu.classList.remove("show")}
+function show_back_menu_button() {back_menu.classList.add("show")}
+function hide_back_menu_button() {back_menu.classList.remove("show")}
+
+// sub menu globals
+let clicked_sub_menu_button = false;
+
 // settings DOM elements
+const color_button = $id("main-menu-color-button");
+const rotation_button = $id("main-menu-rotatio-button");
+const credtis_button = $id("main-menu-credits-button");
 const random_color_rotation_checkbox = $id("random-color-rotation-checkbox");
 const random_color_rotation_interval_select = $id("random-color-rotation-interval-select");
 const palette_checkboxes = document.getElementsByClassName("palette-checkbox");
@@ -35,13 +84,12 @@ const standard_color_interval_time = 60000;
 const standard_rotation_interval_time = 60000;
 const standard_random_color_change_enabled = true;
 const standard_random_rotation_change_enabled = true;
-const standard_active_color_palettes = [1,1,1,1,1,1,1];
+const standard_active_color_palettes = [1, 1, 1, 1, 1, 1, 1];
 
 // global settings
 let color_interval;
 let rotation_interval;
 
-let style_interval_time = standard_style_interval_time;
 let color_interval_time = standard_color_interval_time;
 let rotation_interval_time = standard_rotation_interval_time;
 
@@ -105,7 +153,6 @@ function applyRandomRotation() {
 }
 
 function applyRandomColorPalette() {
-
     // ensures that the selected is always an active on
     let active_color_palette_indexes = active_color_palettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
 
@@ -113,13 +160,13 @@ function applyRandomColorPalette() {
 
     // ensures that the selected palette is not the same as the previous one, 
     // when there is more then one active color
-    if ((color_palette_id) && (active_color_palettes.filter((num)=>{num===1}).length > 1)){
+    if ((color_palette_id) && (active_color_palettes.filter((num) => { num === 1 }).length > 1)) {
         while ((id === color_palette_id)) {
             id = getRandomItem(active_color_palette_indexes);
         }
     }
 
-    if (id === undefined){
+    if (id === undefined) {
         playful_hour_tens.style.color = no_palette
         playful_hour_ones.style.color = no_palette
         playful_dots.style.color = no_palette
@@ -188,40 +235,31 @@ function stopRotationInterval() {
 function applyGlobalSettingsInDOM() {
     random_color_rotation_checkbox.checked = random_color_change_enabled;
     random_color_rotation_interval_select.value = color_interval_time;
-    
+
     for (let i = 0; i < palette_checkboxes.length; i++) {
         palette_checkboxes[i].checked = active_color_palettes[i] === 1;
     }
-    
+
     random_digit_rotation_checkbox.checked = random_rotation_change_enabled;
     random_digit_rotation_interval_select.value = rotation_interval_time;
     init_settings = true;
 }
 
 // the reset function need extra work
-function resetColorSettings(){
+function resetColorSettings() {
     random_color_rotation_interval_select.value = standard_color_interval_time;
     random_color_rotation_checkbox.checked = standard_random_color_change_enabled;
-    for (const pc of palette_checkboxes){
+    for (const pc of palette_checkboxes) {
         pc.checked = true;
     }
 }
 
-function resetRotationSettings(){
+function resetRotationSettings() {
     random_digit_rotation_interval_select.value = standard_rotation_interval_time;
     random_digit_rotation_checkbox.checked = standard_random_rotation_change_enabled;
     applyZeroRotation();
 }
 
-function playful_clock_clicked(){
-    if (random_color_change_enabled) {
-        applyRandomColorPalette();
-    }
-    if (random_rotation_change_enabled) {
-        applyRandomRotation();
-    }
-    showMenuButton();
-}
 
 function init() {
     stopColorInterval();
@@ -248,6 +286,7 @@ function init() {
     }
 }
 
+// EventListeners
 document.addEventListener('DOMContentLoaded', function () {
     init();
 });
@@ -276,7 +315,7 @@ random_color_rotation_interval_select.addEventListener("change", function () {
     color_interval_time = Number(random_color_rotation_interval_select.value);
     if (color_interval) {
         stopColorInterval();
-    } 
+    }
     color_interval = startSyncedInterval(color_interval_time, applyRandomColorPalette);
 })
 
@@ -298,11 +337,66 @@ random_digit_rotation_interval_select.addEventListener("change", function () {
     rotation_interval = startSyncedInterval(rotation_interval_time, applyRandomRotation);
 })
 
-reset_color_settings_button.addEventListener("click",resetColorSettings)
-straighten_digits_button.addEventListener("click",applyZeroRotation)
-reset_rotation_settings_button.addEventListener("click",resetRotationSettings)
+menu_button.addEventListener("change", (event) => {
+    const menu_opened = event.target.checked
+    if (menu_opened) {
+        menu_button_clicked = true
+    } else {
+        menu_button_clicked = false
+        if (clicked_sub_menu_button) {
+            back_to_main_menu()
+        }
+        hideMenuOverlay()
+    }
+})
 
-for (const pc of palette_checkboxes){
+back_menu.addEventListener("click", function(){
+    clicked_sub_menu_button = false
+    hide_back_menu_button()
+    hide_sub_menu()
+    setTimeout(() => {
+        show_main_menu()
+        hide_color_sub_menu()
+        hide_rotation_sub_menu()
+        hide_credits_sub_menu()
+    }, 500)
+})
+
+color_button.addEventListener("click", function () {
+    clicked_sub_menu_button = true
+    hide_main_menu()
+    setTimeout(() => {
+        show_sub_menu()
+    }, 250)
+    show_color_sub_menu()
+    show_back_menu_button()
+})
+
+rotation_button.addEventListener("click", function () {
+    clicked_sub_menu_button = true
+    hide_main_menu()
+    setTimeout(() => {
+        show_sub_menu()
+    }, 250)
+    show_rotation_sub_menu()
+    show_back_menu_button()
+})
+
+credtis_button.addEventListener("click", function () {
+    clicked_sub_menu_button = true
+    hide_main_menu()
+    setTimeout(() => {
+        show_sub_menu()
+    }, 250)
+    show_credits_sub_menu()
+    show_back_menu_button()
+})
+
+reset_color_settings_button.addEventListener("click", resetColorSettings)
+straighten_digits_button.addEventListener("click", applyZeroRotation)
+reset_rotation_settings_button.addEventListener("click", resetRotationSettings)
+
+for (const pc of palette_checkboxes) {
     pc.addEventListener("change", function (e) {
         if (!init_settings) return
         const inputs = Array.from(e.target.parentElement.children).filter((el) => el.tagName === "INPUT");
@@ -313,137 +407,4 @@ for (const pc of palette_checkboxes){
             active_color_palettes[index] = 0;
         }
     })
-} 
-
-const menu_button = $id("toggle-menu")
-const menu = $id("menu")
-let menu_button_clicked = false;
-
-function showMenuButton() {
-    menu.classList.add("show")
-    setTimeout(() => {
-        if (menu_button_clicked) {
-            return
-        }
-        hideMenu()
-    }, 10000)
-}
-
-function hideMenu() {
-    menu.classList.remove("show")
-}
-
-menu_button.addEventListener("change", (event) => {
-    const menu_opened = event.target.checked
-    if (menu_opened) {
-        menu_button_clicked = true
-    } else {
-        menu_button_clicked = false
-        if (clicked_sub_menu_button.length > 0) {
-            back_to_main_menu()
-        }
-        hideMenu()
-    }
-})
-
-
-const sub_menu = document.getElementsByClassName("sub-menu")[0]
-const main_menu = document.getElementsByClassName("main-menu")[0]
-const main_menu_button = document.getElementsByClassName("main-menu-button")
-const color_sub_menu = document.getElementById("color-sub-menu")
-const rotation_sub_menu = document.getElementById("rotation-sub-menu")
-const credits_sub_menu = document.getElementById("credits-sub-menu")
-const back_menu = document.getElementsByClassName("back")[0]
-
-let clicked_sub_menu_button = "";
-
-function main_menu_button_clicked(e) {
-    clicked_sub_menu_button = e.target.value
-    if (clicked_sub_menu_button == "color" || clicked_sub_menu_button == "rotation" || clicked_sub_menu_button == "credits") {
-        hide_main_menu()
-        setTimeout(() => {
-            show_sub_menu()
-        }, 250)
-    }
-    if (clicked_sub_menu_button == "color") {
-        show_color_sub_menu()
-    }
-    if (clicked_sub_menu_button == "rotation") {
-        show_rotation_sub_menu()
-    }
-    if (clicked_sub_menu_button == "credits") {
-        show_credits_sub_menu()
-    }
-    if (clicked_sub_menu_button == "color" || clicked_sub_menu_button == "rotation" || clicked_sub_menu_button == "credits") {
-        show_back_menu_button()
-    } else {
-        hide_back_menu_button()
-    }
-}
-
-function show_main_menu() {
-    main_menu.classList.remove("hide")
-}
-
-function hide_main_menu() {
-    main_menu.classList.add("hide")
-}
-
-function show_sub_menu() {
-    sub_menu.classList.add("show")
-}
-
-function hide_sub_menu() {
-    sub_menu.classList.remove("show")
-}
-
-
-function show_color_sub_menu() {
-    color_sub_menu.classList.add("show")
-}
-
-function hide_color_sub_menu() {
-    color_sub_menu.classList.remove("show")
-}
-
-function show_rotation_sub_menu() {
-    rotation_sub_menu.classList.add("show")
-}
-
-function hide_rotation_sub_menu() {
-    rotation_sub_menu.classList.remove("show")
-}
-
-function show_credits_sub_menu() {
-    credits_sub_menu.classList.add("show")
-}
-
-function hide_credits_sub_menu() {
-    credits_sub_menu.classList.remove("show")
-}
-
-
-function show_back_menu_button() {
-    back_menu.classList.add("show")
-}
-
-function hide_back_menu_button() {
-    back_menu.classList.remove("show")
-}
-
-back_menu.addEventListener("click", back_to_main_menu)
-function back_to_main_menu() {
-    clicked_sub_menu_button = ""
-    hide_back_menu_button()
-    hide_sub_menu()
-    setTimeout(() => {
-        show_main_menu()
-        hide_color_sub_menu()
-        hide_rotation_sub_menu()
-        hide_credits_sub_menu()
-    }, 500)
-}
-
-for (const mmb of main_menu_button) {
-    mmb.addEventListener("click", main_menu_button_clicked)
 }

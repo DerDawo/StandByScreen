@@ -48,7 +48,7 @@ body {
     transition: 0.5s;
     opacity: 0;
     pointer-events: none;
-}
+text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000;}
 
 .overlay:has(#toggle-menu:not(:checked)){
     right: -240px;
@@ -88,6 +88,8 @@ body {
     justify-content: center;
     align-items: center;
     transition: 0.2s;
+    font-size: 32px;
+    font-weight: bold;
 }
 
 #toggle-menu{
@@ -131,6 +133,7 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: 0.2s;
+    font-size: 32px;
 }
 
 .back.show{
@@ -144,6 +147,17 @@ body {
 
 .back:active{
     background-color: #0000008e;
+}
+
+.chevron{
+  border-color:white;
+  border-style: solid;
+  border-top: 0;
+  border-left: 2px;
+    height: 8px;
+  width: 8px;
+  transform: rotate(135deg);
+  border-width: 2px;
 }
 
 .back > label{
@@ -248,6 +262,7 @@ body {
     display: grid;
     grid-template-columns: 1fr 50px;
     gap: 5px;
+    align-content: center;
 }
 
 .select-container{
@@ -262,6 +277,10 @@ body {
 }
 
 /*Color Palette Container*/
+.sub-menu-container-color-palettes{
+
+}
+
 .color-palette-container{
     display: grid;
     grid-template-columns: 1fr 1fr;
