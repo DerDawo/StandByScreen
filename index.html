@@ -8,8 +8,21 @@
     <meta name="description" content="Stand By Screen for any device">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="checkbox.css">
-    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="./components/Checkbox.css">
+    <link rel="stylesheet" href="./components/ClockPlayful.css">
+    <link rel="stylesheet" href="./components/Divider.css">
+    <link rel="stylesheet" href="./components/MainMenu.css">
+    <link rel="stylesheet" href="./components/MainMenuBackButton.css">
+    <link rel="stylesheet" href="./components/MainMenuButton.css">
+    <link rel="stylesheet" href="./components/MainMenuToggleButton.css">
+    <link rel="stylesheet" href="./components/Select.css">
+    <link rel="stylesheet" href="./components/SubMenuColor.css">
+    <link rel="stylesheet" href="./components/SubMenuCredits.css">
+    <link rel="stylesheet" href="./components/SubMenuRotation.css">
+    <link rel="stylesheet" href="./components/SubMenuTimeout.css">
+    <link rel="stylesheet" href="./components/SubMenuWrapper.css">
+    <link rel="stylesheet" href="./components/TimeoutOverlay.css">
+    <script src="script.js" type="module" defer></script>
 
     <meta name="application-name" content="StandByScreen">
     <meta name="theme-color" content="#000000">
@@ -82,17 +95,22 @@
 </head>
 
 <body>
+    <div id="timeout-overlay" class="hide hidden">
+        <p>Touch to Activate</p>
+    </div>
     <div class="overlay" id="menu">
         <div class="toggle">
             <input type="checkbox" id="toggle-menu">
             <label for="toggle-menu">
                 <i id="open-menu">&#8801;</i>
-                <i id="close-menu">	&times;</i>
+                <i id="close-menu"> &times;</i>
             </label>
         </div>
         <div class="back">
             <label>
-                <i><div class="chevron"></div></i>
+                <i>
+                    <div class="chevron"></div>
+                </i>
             </label>
         </div>
         <div class="main-menu">
@@ -103,6 +121,10 @@
             <div class="divider"></div>
             <button class="main-menu-button" value="rotation" id="main-menu-rotatio-button">
                 Rotation
+            </button>
+            <div class="divider"></div>
+            <button class="main-menu-button" value="timeout" id="main-menu-timeout-button">
+                Timeout
             </button>
             <div class="divider"></div>
             <button class="main-menu-button" value="credits" id="main-menu-credits-button">
@@ -233,17 +255,46 @@
                 <button class="sub-menu-button" id="reset-rotation-settings-button">Reset</button>
                 <div class="divider"></div>
             </div>
-            <div class="sub-menu-category" id="reset-sub-menu">
-
+            <div class="sub-menu-category" id="timeout-sub-menu">
+                <div class="divider"></div>
+                <div class="sub-menu-container checkbox-container">
+                    <label for="darken-screen-timeout-checkbox">Darken Screen on Timeout Enabled</label>
+                    <label class="container">
+                        <input type="checkbox" id="darken-screen-timeout-checkbox"
+                            name="darken-screen-timeout-checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+                <div class="divider"></div>
+                <div class="sub-menu-container select-container">
+                    <label for="darken-screen-timeout-interval-select">Timeout Interval</label>
+                    <select id="darken-screen-timeout-interval-select" name="darken-screen-timeout-interval-select">
+                        <option value="5000">5 s</option>
+                        <option value="10000">10 s</option>
+                        <option value="30000">30 s</option>
+                        <option value="60000">1 m</option>
+                        <option value="60000">2 m</option>
+                        <option value="300000">5 m</option>
+                        <option value="600000">10 m</option>
+                        <option value="900000">15 m</option>
+                    </select>
+                </div>
+                <div class="divider"></div>
+                <button class="sub-menu-button" id="reset-timeout-settings-button">Reset</button>
+                <div class="divider"></div>
             </div>
             <div class="sub-menu-category" id="credits-sub-menu">
-                Design Inspiration: <a href="https://support.apple.com/de-de/guide/iphone/iph878d77632/ios" target="_blank">Apple StandBy</a>
-                <br>
-                <br>
-                Author: <a href="https://github.com/DerDawo/" target="_blank">DerDawo</a>
+                Design Inspiration: <a href="https://support.apple.com/de-de/guide/iphone/iph878d77632/ios"
+                    target="_blank">Apple StandBy</a>
                 <br>
                 <br>
                 Font: <a href="https://fonts.google.com/specimen/Nunito" target="_blank">Nunito by Google</a>
+                <br>
+                <br>
+                Author: <a href="https://github.com/DerDawo/" target="_blank">DerDawo</a> &copy; 2025
+                <br>
+                <br>
+                Version: 1.0.0
             </div>
         </div>
     </div>
