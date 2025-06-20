@@ -1,0 +1,36 @@
+/*Menu*/
+.overlay{
+    position: fixed;
+    z-index: 2;
+    width: 240px;
+    height: 100dvh;
+    background-image: linear-gradient(90deg, #13131300, #131313bb , #131313ea, black);
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: 0.5s;
+    opacity: 0;
+    pointer-events: none;
+    text-shadow: 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000, 0px 0px 8px #000000;
+}
+
+.overlay:has(#toggle-menu:not(:checked)){
+    right: -240px;
+}
+
+.overlay.show{
+    opacity: 1;
+    pointer-events: unset;
+}
+
+.main-menu{
+    display: flex;
+    flex-direction: column;
+    transition: 0.5s;
+}
+
+.main-menu.hide{
+    opacity: 0;
+    pointer-events: none;
+}

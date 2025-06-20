@@ -1,0 +1,17 @@
+.main-menu button{
+    background-color: #00000000;
+    color: white;
+    border: 0;
+    height: 50px;
+    transition: 0.2s;
+    cursor: pointer;
+    font-family: 'Nunito';
+}
+
+.main-menu button:hover{
+    background-image: linear-gradient(90deg, #00000000, #0000004b, black);
+}
+
+.main-menu button:active{
+    background-image: linear-gradient(90deg, #00000000, #0000008e, black);
+}

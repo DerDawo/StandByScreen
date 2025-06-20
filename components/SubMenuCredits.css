@@ -1,0 +1,12 @@
+/*Credits Sub Menu*/
+#credits-sub-menu {
+    text-align: center;
+}
+
+#credits-sub-menu > a:link {
+    color: white;
+}
+
+#credits-sub-menu > a:visited {
+    color: white;
+}

@@ -1,0 +1,31 @@
+@font-face {
+    font-family: 'Nunito';
+    src: url('../src/Nunito-VariableFont_wght.ttf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+#timeout-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100dvw;
+    height: 100dvh;
+    background-color: #000000d9;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    font-family: 'Nunito';
+    opacity: 1;
+    transition: .5s;
+}
+
+#timeout-overlay.hide{
+    transition: .5s;
+    opacity: 0;
+}
+
+#timeout-overlay.hidden{
+    display: none;
+}

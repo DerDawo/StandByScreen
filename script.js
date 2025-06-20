@@ -1,3 +1,55 @@
+class TimeoutOverlay {
+    constructor(element) {
+        this.element = element;
+        this.timeout = null;
+        this.isVisible = false;
+        this.timeoutDuration = 5000; // default duration
+
+        this.element.addEventListener('click', () => {
+            if (!this.isVisible) return;
+            this.hide();
+        })
+    }
+
+    setDuration(duration) {
+        this.timeoutDuration = duration;
+    }
+
+    show() {
+        if (this.isVisible) return;
+
+        this.timeout = setTimeout(() => {
+            this.element.classList.remove("hidden");
+            this.element.classList.add("hide");
+            setTimeout(() => {
+                this.element.classList.remove("hide");
+            }
+                , 10);
+            this.isVisible = true;
+
+        }, this.timeoutDuration);
+    }
+
+    hide() {
+        clearTimeout(this.timeout);
+
+        this.element.classList.add("hide");
+
+        setTimeout(
+            () => { this.element.classList.add("hidden"); },
+            500
+        );
+
+        this.isVisible = false;
+
+        this.show(this.timeoutDuration)
+    }
+
+    reset() {
+        this.hide();
+    }
+
+}
 // playful clock DOM elements
 const playful_clock = $id("playful");
 const playful_hour_tens = $id("playful").getElementsByClassName("time")[0]
@@ -32,6 +84,7 @@ let menu_button_clicked = false;
 const sub_menu = document.getElementsByClassName("sub-menu")[0]
 const color_sub_menu = document.getElementById("color-sub-menu")
 const rotation_sub_menu = document.getElementById("rotation-sub-menu")
+const timeout_sub_menu = document.getElementById("timeout-sub-menu")
 const credits_sub_menu = document.getElementById("credits-sub-menu")
 const back_menu = document.getElementsByClassName("back")[0]
 
@@ -44,6 +97,8 @@ function show_color_sub_menu() { color_sub_menu.classList.add("show") }
 function hide_color_sub_menu() { color_sub_menu.classList.remove("show") }
 function show_rotation_sub_menu() { rotation_sub_menu.classList.add("show") }
 function hide_rotation_sub_menu() { rotation_sub_menu.classList.remove("show") }
+function show_timeout_sub_menu() { timeout_sub_menu.classList.add("show") }
+function hide_timeout_sub_menu() { timeout_sub_menu.classList.remove("show") }
 function show_credits_sub_menu() { credits_sub_menu.classList.add("show") }
 function hide_credits_sub_menu() { credits_sub_menu.classList.remove("show") }
 function show_back_menu_button() { back_menu.classList.add("show") }
@@ -55,15 +110,19 @@ let clicked_sub_menu_button = false;
 // settings DOM elements
 const color_button = $id("main-menu-color-button");
 const rotation_button = $id("main-menu-rotatio-button");
+const timeout_button = $id("main-menu-timeout-button");
 const credtis_button = $id("main-menu-credits-button");
 const random_color_rotation_checkbox = $id("random-color-rotation-checkbox");
 const random_color_rotation_interval_select = $id("random-color-rotation-interval-select");
+const timeout_darken_checkbox = $id("darken-screen-timeout-checkbox");
 const palette_checkboxes = document.getElementsByClassName("palette-checkbox");
 const random_digit_rotation_checkbox = $id("random-digit-rotation-checkbox");
 const random_digit_rotation_interval_select = $id("random-digit-rotation-interval-select");
+const timeout_interval_select = $id("darken-screen-timeout-interval-select");
 const reset_color_settings_button = $id("reset-color-settings-button");
 const straighten_digits_button = $id("straighten-digits-button");
 const reset_rotation_settings_button = $id("reset-rotation-settings-button");
+const reset_timeout_settings_button = $id("reset-timeout-settings-button");
 
 // color palettes
 const color_palette_playful = [
@@ -81,25 +140,35 @@ const no_palette = "#ffffffdd" // white
 // standard settings
 const standard_style_interval_time = 60000;
 const standard_color_interval_time = 60000;
-const standard_rotation_interval_time = 60000;
+const standard_rotation_interval_time = 900000;
+const standard_timeout_interval_time = 5000;
 const standard_random_color_change_enabled = true;
 const standard_random_rotation_change_enabled = true;
 const standard_active_color_palettes = [1, 1, 1, 1, 1, 1, 1];
+const standard_timeout_darken_enabled = true;
 
 // global settings
 let color_interval;
 let rotation_interval;
+let timeout_interval;
 
 let color_interval_time = standard_color_interval_time;
 let rotation_interval_time = standard_rotation_interval_time;
+let timeoutDuration = standard_timeout_interval_time;
 
 let random_color_change_enabled = standard_random_color_change_enabled;
 let random_rotation_change_enabled = standard_random_rotation_change_enabled;
+let timeout_darken_enabled = standard_timeout_darken_enabled;
 
 let active_color_palettes = [...standard_active_color_palettes];
 let color_palette_id;
 
+let timeout_overlay_visible = false;
 let init_settings = false;
+
+// timeout overlay DOM elements
+const timeout_overlay = new TimeoutOverlay($id("timeout-overlay"));
+timeout_overlay.setDuration(timeoutDuration)
 
 // utility functions
 function $id(id) { return document.getElementById(id) };
@@ -242,6 +311,10 @@ function applyGlobalSettingsInDOM() {
 
     random_digit_rotation_checkbox.checked = random_rotation_change_enabled;
     random_digit_rotation_interval_select.value = rotation_interval_time;
+
+    timeout_darken_checkbox.checked = timeout_darken_enabled;
+    timeout_interval_select.value = timeoutDuration;
+
     init_settings = true;
 }
 
@@ -258,6 +331,11 @@ function resetRotationSettings() {
     random_digit_rotation_interval_select.value = standard_rotation_interval_time;
     random_digit_rotation_checkbox.checked = standard_random_rotation_change_enabled;
     applyZeroRotation();
+}
+
+function resetTimeoutSettings() {
+    timeout_darken_checkbox.checked = standard_timeout_darken_enabled;
+    timeout_interval_select.value = standard_timeout_interval_time;
 }
 
 
@@ -284,11 +362,19 @@ function init() {
     if (random_rotation_change_enabled) {
         rotation_interval = startSyncedInterval(rotation_interval_time, applyRandomRotation);
     }
+
+    if (timeout_darken_enabled) {
+        timeout_overlay.show(timeoutDuration);
+    }
 }
 
 // EventListeners
 document.addEventListener('DOMContentLoaded', function () {
     init();
+});
+
+document.body.addEventListener("click", function (evt) {
+    timeout_overlay.reset()
 });
 
 playful_clock.addEventListener("click", function () {
@@ -337,6 +423,13 @@ random_digit_rotation_interval_select.addEventListener("change", function () {
     rotation_interval = startSyncedInterval(rotation_interval_time, applyRandomRotation);
 })
 
+timeout_interval_select.addEventListener("change", function () {
+    if (!init_settings) return
+    timeoutDuration = Number(timeout_interval_select.value);
+    timeout_overlay.setDuration(timeoutDuration);
+})
+
+
 menu_button.addEventListener("change", (event) => {
     const menu_opened = event.target.checked
     if (menu_opened) {
@@ -351,6 +444,7 @@ menu_button.addEventListener("change", (event) => {
                 show_main_menu()
                 hide_color_sub_menu()
                 hide_rotation_sub_menu()
+                hide_timeout_sub_menu()
                 hide_credits_sub_menu()
             }, 500)
         }
@@ -366,6 +460,7 @@ back_menu.addEventListener("click", function () {
         show_main_menu()
         hide_color_sub_menu()
         hide_rotation_sub_menu()
+        hide_timeout_sub_menu()
         hide_credits_sub_menu()
     }, 500)
 })
@@ -390,6 +485,16 @@ rotation_button.addEventListener("click", function () {
     show_back_menu_button()
 })
 
+timeout_button.addEventListener("click", function () {
+    clicked_sub_menu_button = true
+    hide_main_menu()
+    setTimeout(() => {
+        show_sub_menu()
+    }, 250)
+    show_timeout_sub_menu()
+    show_back_menu_button()
+})
+
 credtis_button.addEventListener("click", function () {
     clicked_sub_menu_button = true
     hide_main_menu()
@@ -403,6 +508,7 @@ credtis_button.addEventListener("click", function () {
 reset_color_settings_button.addEventListener("click", resetColorSettings)
 straighten_digits_button.addEventListener("click", applyZeroRotation)
 reset_rotation_settings_button.addEventListener("click", resetRotationSettings)
+reset_timeout_settings_button.addEventListener("click", resetTimeoutSettings)
 
 for (const pc of palette_checkboxes) {
     pc.addEventListener("change", function (e) {
