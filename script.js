@@ -4,11 +4,21 @@ class TimeoutOverlay {
         this.timeout = null;
         this.isVisible = false;
         this.timeoutDuration = 5000; // default duration
+        this.enabled = true;
 
         this.element.addEventListener('click', () => {
             if (!this.isVisible) return;
             this.hide();
         })
+    }
+
+    setEnabled(enabled) {
+        this.enabled = enabled;
+        if (!this.enabled) {
+            this.hide();
+        } else {
+            this.show();
+        }
     }
 
     setDuration(duration) {
@@ -50,13 +60,91 @@ class TimeoutOverlay {
     }
 
 }
-// playful clock DOM elements
-const playful_clock = $id("playful");
-const playful_hour_tens = $id("playful").getElementsByClassName("time")[0]
-const playful_hour_ones = $id("playful").getElementsByClassName("time")[1]
-const playful_dots = $id("playful").getElementsByClassName("time")[2]
-const playful_minutes_tens = $id("playful").getElementsByClassName("time")[3]
-const playful_minutes_ones = $id("playful").getElementsByClassName("time")[4]
+
+class PlayfulClock {
+    constructor(element) {
+        this.element = element;
+        this.hourTens = element.getElementsByClassName("time")[0];
+        this.hourOnes = element.getElementsByClassName("time")[1];
+        this.dots = element.getElementsByClassName("time")[2];
+        this.minutesTens = element.getElementsByClassName("time")[3];
+        this.minutesOnes = element.getElementsByClassName("time")[4];
+    }
+
+    updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours());
+        const minutes = String(now.getMinutes());
+
+        if (minutes.length == 1) {
+            document.documentElement.style.setProperty("--playful-minute-tens-translation", 0);
+            document.documentElement.style.setProperty("--playful-minute-ones-translation", `-${100 * Number(minutes[0])}dvh`);
+        }
+
+        if (minutes.length == 2) {
+            document.documentElement.style.setProperty("--playful-minute-tens-translation", `-${100 * Number(minutes[0])}dvh`);
+            document.documentElement.style.setProperty("--playful-minute-ones-translation", `-${100 * Number(minutes[1])}dvh`);
+        }
+
+        if (hours.length == 1) {
+            document.documentElement.style.setProperty("--playful-hour-tens-translation", 0);
+            document.documentElement.style.setProperty("--playful-hour-ones-translation", `-${100 * Number(hours[0])}dvh`);
+        }
+
+        if (hours.length == 2) {
+            document.documentElement.style.setProperty("--playful-hour-tens-translation", `-${100 * Number(hours[0])}dvh`);
+            document.documentElement.style.setProperty("--playful-hour-ones-translation", `-${100 * Number(hours[1])}dvh`);
+        }
+    }
+
+    applyRandomRotation() {
+        document.documentElement.style.setProperty("--playful-hour-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
+        document.documentElement.style.setProperty("--playful-hour-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
+        document.documentElement.style.setProperty("--playful-dots-rotation", `${getRandomNumber(-10, 10)}deg`);
+        document.documentElement.style.setProperty("--playful-minute-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
+        document.documentElement.style.setProperty("--playful-minute-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
+    }
+
+    applyRandomColorPalette() {
+        // ensures that the selected is always an active on
+        let active_color_palette_indexes = active_color_palettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
+
+        let id = getRandomItem(active_color_palette_indexes)
+
+        // ensures that the selected palette is not the same as the previous one, 
+        // when there is more then one active color
+        if ((color_palette_id) && (active_color_palettes.filter((num) => { num === 1 }).length > 1)) {
+            while ((id === color_palette_id)) {
+                id = getRandomItem(active_color_palette_indexes);
+            }
+        }
+
+        if (id === undefined) {
+            this.hourTens.style.color = no_palette
+            this.hourOnes.style.color = no_palette
+            this.dots.style.color = no_palette
+            this.minutesTens.style.color = no_palette
+            this.minutesOnes.style.color = no_palette
+            return
+        }
+
+        color_palette_id = id;
+        let palette = color_palette_playful[color_palette_id];
+        this.hourTens.style.color = palette[0]
+        this.hourOnes.style.color = palette[1]
+        this.dots.style.color = palette[2]
+        this.minutesTens.style.color = palette[3]
+        this.minutesOnes.style.color = palette[4]
+    }
+
+    applyZeroRotation() {
+        document.documentElement.style.setProperty("--playful-hour-tens-rotation", `0deg`);
+        document.documentElement.style.setProperty("--playful-hour-ones-rotation", `0deg`);
+        document.documentElement.style.setProperty("--playful-dots-rotation", `0deg`);
+        document.documentElement.style.setProperty("--playful-minute-tens-rotation", `0deg`);
+        document.documentElement.style.setProperty("--playful-minute-ones-rotation", `0deg`);
+    }
+}
 
 // main menu DOM elements
 const main_menu = document.getElementsByClassName("main-menu")[0]
@@ -163,10 +251,12 @@ let timeout_darken_enabled = standard_timeout_darken_enabled;
 let active_color_palettes = [...standard_active_color_palettes];
 let color_palette_id;
 
-let timeout_overlay_visible = false;
 let init_settings = false;
 
-// timeout overlay DOM elements
+// playful clock instance
+const playful_clock = new PlayfulClock($id("playful"));
+
+// timeout overlay instance
 const timeout_overlay = new TimeoutOverlay($id("timeout-overlay"));
 timeout_overlay.setDuration(timeoutDuration)
 
@@ -213,80 +303,6 @@ function startSyncedInterval(interval, callback) {
     };
 }
 
-function applyRandomRotation() {
-    document.documentElement.style.setProperty("--playful-hour-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
-    document.documentElement.style.setProperty("--playful-hour-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
-    document.documentElement.style.setProperty("--playful-dots-rotation", `${getRandomNumber(-10, 10)}deg`);
-    document.documentElement.style.setProperty("--playful-minute-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
-    document.documentElement.style.setProperty("--playful-minute-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
-}
-
-function applyRandomColorPalette() {
-    // ensures that the selected is always an active on
-    let active_color_palette_indexes = active_color_palettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
-
-    let id = getRandomItem(active_color_palette_indexes)
-
-    // ensures that the selected palette is not the same as the previous one, 
-    // when there is more then one active color
-    if ((color_palette_id) && (active_color_palettes.filter((num) => { num === 1 }).length > 1)) {
-        while ((id === color_palette_id)) {
-            id = getRandomItem(active_color_palette_indexes);
-        }
-    }
-
-    if (id === undefined) {
-        playful_hour_tens.style.color = no_palette
-        playful_hour_ones.style.color = no_palette
-        playful_dots.style.color = no_palette
-        playful_minutes_tens.style.color = no_palette
-        playful_minutes_ones.style.color = no_palette
-        return
-    }
-
-    color_palette_id = id;
-    let palette = color_palette_playful[color_palette_id];
-    playful_hour_tens.style.color = palette[0]
-    playful_hour_ones.style.color = palette[1]
-    playful_dots.style.color = palette[2]
-    playful_minutes_tens.style.color = palette[3]
-    playful_minutes_ones.style.color = palette[4]
-}
-
-function applyZeroRotation() {
-    document.documentElement.style.setProperty("--playful-hour-tens-rotation", `0deg`);
-    document.documentElement.style.setProperty("--playful-hour-ones-rotation", `0deg`);
-    document.documentElement.style.setProperty("--playful-dots-rotation", `0deg`);
-    document.documentElement.style.setProperty("--playful-minute-tens-rotation", `0deg`);
-    document.documentElement.style.setProperty("--playful-minute-ones-rotation", `0deg`);
-}
-
-function updatePlayfulTime() {
-    const now = new Date();
-    const hours = String(now.getHours());
-    const minutes = String(now.getMinutes());
-
-    if (minutes.length == 1) {
-        document.documentElement.style.setProperty("--playful-minute-tens-translation", 0);
-        document.documentElement.style.setProperty("--playful-minute-ones-translation", `-${100 * Number(minutes[0])}dvh`);
-    }
-
-    if (minutes.length == 2) {
-        document.documentElement.style.setProperty("--playful-minute-tens-translation", `-${100 * Number(minutes[0])}dvh`);
-        document.documentElement.style.setProperty("--playful-minute-ones-translation", `-${100 * Number(minutes[1])}dvh`);
-    }
-
-    if (hours.length == 1) {
-        document.documentElement.style.setProperty("--playful-hour-tens-translation", 0);
-        document.documentElement.style.setProperty("--playful-hour-ones-translation", `-${100 * Number(hours[0])}dvh`);
-    }
-
-    if (hours.length == 2) {
-        document.documentElement.style.setProperty("--playful-hour-tens-translation", `-${100 * Number(hours[0])}dvh`);
-        document.documentElement.style.setProperty("--playful-hour-ones-translation", `-${100 * Number(hours[1])}dvh`);
-    }
-}
-
 function stopColorInterval() {
     if (color_interval) {
         color_interval.stop();
@@ -330,7 +346,7 @@ function resetColorSettings() {
 function resetRotationSettings() {
     random_digit_rotation_interval_select.value = standard_rotation_interval_time;
     random_digit_rotation_checkbox.checked = standard_random_rotation_change_enabled;
-    applyZeroRotation();
+    playful_clock.applyZeroRotation();
 }
 
 function resetTimeoutSettings() {
@@ -345,22 +361,28 @@ function init() {
 
     applyGlobalSettingsInDOM();
 
-    updatePlayfulTime();
+    playful_clock.updateTime()
 
     if (random_color_change_enabled) {
-        applyRandomColorPalette()
+        playful_clock.applyRandomColorPalette()
     }
     if (random_rotation_change_enabled) {
-        applyRandomRotation()
+        playful_clock.applyRandomRotation()
     }
 
-    startSyncedInterval(60000, updatePlayfulTime);
+    startSyncedInterval(60000, playful_clock.updateTime);
 
     if (random_color_change_enabled) {
-        color_interval = startSyncedInterval(color_interval_time, applyRandomColorPalette);
+        color_interval = startSyncedInterval(
+            color_interval_time, 
+            playful_clock.applyRandomColorPalette.bind(playful_clock)
+        );
     }
     if (random_rotation_change_enabled) {
-        rotation_interval = startSyncedInterval(rotation_interval_time, applyRandomRotation);
+        rotation_interval = startSyncedInterval(
+            rotation_interval_time, 
+            playful_clock.applyRandomRotation
+        );
     }
 
     if (timeout_darken_enabled) {
@@ -377,12 +399,12 @@ document.body.addEventListener("click", function () {
     timeout_overlay.reset()
 });
 
-playful_clock.addEventListener("click", function () {
+playful_clock.element.addEventListener("click", function () {
     if (random_color_change_enabled) {
-        applyRandomColorPalette()
+        playful_clock.applyRandomColorPalette();
     }
     if (random_rotation_change_enabled) {
-        applyRandomRotation()
+        playful_clock.applyRandomRotation();
     }
     showMenuButton()
 })
@@ -392,7 +414,7 @@ random_color_rotation_checkbox.addEventListener("change", function () {
     random_color_change_enabled = random_color_rotation_checkbox.checked;
     stopColorInterval();
     if (random_color_change_enabled) {
-        color_interval = startSyncedInterval(color_interval_time, applyRandomColorPalette);
+        color_interval = startSyncedInterval(color_interval_time, playful_clock.applyRandomColorPalette.bind(playful_clock));
     }
 })
 
@@ -402,7 +424,7 @@ random_color_rotation_interval_select.addEventListener("change", function () {
     if (color_interval) {
         stopColorInterval();
     }
-    color_interval = startSyncedInterval(color_interval_time, applyRandomColorPalette);
+    color_interval = startSyncedInterval(color_interval_time, playful_clock.applyRandomColorPalette.bind(playful_clock));
 })
 
 random_digit_rotation_checkbox.addEventListener("change", function () {
@@ -410,7 +432,7 @@ random_digit_rotation_checkbox.addEventListener("change", function () {
     random_color_change_enabled = random_digit_rotation_checkbox.checked;
     stopRotationInterval();
     if (random_color_change_enabled) {
-        rotation_interval = startSyncedInterval(rotation_interval_time, applyRandomRotation);
+        rotation_interval = startSyncedInterval(rotation_interval_time, playful_clock.applyRandomRotation);
     }
 })
 
@@ -420,7 +442,7 @@ random_digit_rotation_interval_select.addEventListener("change", function () {
     if (rotation_interval) {
         stopRotationInterval();
     }
-    rotation_interval = startSyncedInterval(rotation_interval_time, applyRandomRotation);
+    rotation_interval = startSyncedInterval(rotation_interval_time, playful_clock.applyRandomRotation);
 })
 
 timeout_interval_select.addEventListener("change", function () {
@@ -506,7 +528,7 @@ credtis_button.addEventListener("click", function () {
 })
 
 reset_color_settings_button.addEventListener("click", resetColorSettings)
-straighten_digits_button.addEventListener("click", applyZeroRotation)
+straighten_digits_button.addEventListener("click", playful_clock.applyZeroRotation)
 reset_rotation_settings_button.addEventListener("click", resetRotationSettings)
 reset_timeout_settings_button.addEventListener("click", resetTimeoutSettings)
 
