@@ -141,7 +141,7 @@ const no_palette = "#ffffffdd" // white
 const standard_style_interval_time = 60000;
 const standard_color_interval_time = 60000;
 const standard_rotation_interval_time = 900000;
-const standard_timeout_interval_time = 5000;
+const standard_timeout_interval_time = 900000;
 const standard_random_color_change_enabled = true;
 const standard_random_rotation_change_enabled = true;
 const standard_active_color_palettes = [1, 1, 1, 1, 1, 1, 1];
@@ -373,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
     init();
 });
 
-document.body.addEventListener("click", function (evt) {
+document.body.addEventListener("click", function () {
     timeout_overlay.reset()
 });
 
