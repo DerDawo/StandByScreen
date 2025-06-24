@@ -1,3 +1,121 @@
+class Settings {
+    #randomColorChangeEnabled = true;
+    #randomRotationChangeEnabled = true;
+    #timeoutDarkenEnabled = true;
+    #colorIntervalTime = 60000; // 1 minute
+    #rotationIntervalTime = 60000; // 1 minute
+    #timeoutDuration = 900000; // 15 minutes
+    #activeColorPalettes = [1, 1, 1, 1, 1, 1, 1]; // all palettes active
+    #colorPaletteId = 0; // default palette id
+
+    constructor() {
+
+        if (Settings._instance) {
+            throw new Error("Settings can't be instantiated more than once.")
+        }
+        Settings._instance = this;
+
+        this.randomColorChangeEnabled = this.#randomColorChangeEnabled;
+        this.randomRotationChangeEnabled = this.#randomRotationChangeEnabled;
+        this.timeoutDarkenEnabled = this.#timeoutDarkenEnabled;
+        this.colorIntervalTime = this.#colorIntervalTime; // 1 minute
+        this.rotationIntervalTime = this.#rotationIntervalTime; // 1 minute
+        this.timeoutDuration = this.#timeoutDuration; // 15 minutes
+        this.activeColorPalettes = this.#activeColorPalettes; // all palettes active
+        this.colorPaletteId = this.#colorPaletteId; // default palette id
+        this.appliedInDOM = false;
+    }
+
+    setRandomColorChangeEnabled(value) {
+        this.randomColorChangeEnabled = value;
+    }
+
+    setRandomRotationChangeEnabled(value) {
+        this.randomRotationChangeEnabled = value;
+    }
+
+    setTimeoutDarkenEnabled(value) {
+        this.timeoutDarkenEnabled = value;
+    }
+
+    setColorIntervalTime(value) {
+        this.colorIntervalTime = value;
+    }
+
+    setRotationIntervalTime(value) {
+        this.rotationIntervalTime = value;
+    }
+
+    setTimeoutDuration(value) {
+        this.timeoutDuration = value;
+    }
+
+    setActiveColorPalettes(value) {
+        if (Array.isArray(value) && value.length === 7) {
+            this.activeColorPalettes = value;
+        } else {
+            console.error("Invalid color palettes array");
+        }
+    }
+
+    setColorPaletteId(value) {
+        this.colorPaletteId = value;
+    }
+
+    log() {
+        console.log("Settings:");
+        console.log("Random Color Change Enabled:", this.randomColorChangeEnabled);
+        console.log("Random Rotation Change Enabled:", this.randomRotationChangeEnabled);
+        console.log("Timeout Darken Enabled:", this.timeoutDarkenEnabled);
+        console.log("Color Interval Time:", this.colorIntervalTime);
+        console.log("Rotation Interval Time:", this.rotationIntervalTime);
+        console.log("Timeout Duration:", this.timeoutDuration);
+        console.log("Active Color Palettes:", this.activeColorPalettes);
+        console.log("Color Palette ID:", this.colorPaletteId);
+    }
+
+    applyAllInDOM() {
+        random_color_rotation_checkbox.checked = this.randomColorChangeEnabled;
+        random_color_rotation_interval_select.value = this.colorIntervalTime;
+
+        for (let i = 0; i < palette_checkboxes.length; i++) {
+            palette_checkboxes[i].checked = this.activeColorPalettes[i] === 1;
+        }
+
+        random_digit_rotation_checkbox.checked = this.randomRotationChangeEnabled;
+        random_digit_rotation_interval_select.value = this.rotationIntervalTime;
+
+        timeout_darken_checkbox.checked = this.timeoutDarkenEnabled;
+        timeout_interval_select.value = this.timeoutDuration;
+
+        this.appliedInDOM = true;
+    }
+
+    resetColorSettings() {
+        this.setRandomColorChangeEnabled(this.#randomColorChangeEnabled);
+        this.setColorIntervalTime(this.#colorIntervalTime);
+        this.setActiveColorPalettes([...this.#activeColorPalettes]);
+        this.applySettingsInDOM();
+    }
+
+    resetRotationSettings() {
+        this.setRandomRotationChangeEnabled(this.#randomRotationChangeEnabled);
+        this.setRotationIntervalTime(this.#rotationIntervalTime);
+        this.applySettingsInDOM();
+    }
+
+    resetTimeoutSettings() {
+        this.setTimeoutDarkenEnabled(this.#timeoutDarkenEnabled);
+        this.setTimeoutDuration(this.#timeoutDuration);
+        this.applySettingsInDOM();
+    }
+
+    applySettingsInDOM() {
+        this.applyAllInDOM()
+    }
+
+}
+
 class TimeoutOverlay {
     constructor(element) {
         this.element = element;
@@ -107,14 +225,14 @@ class PlayfulClock {
 
     applyRandomColorPalette() {
         // ensures that the selected is always an active on
-        let active_color_palette_indexes = active_color_palettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
+        let active_color_palette_indexes = settings.activeColorPalettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
 
         let id = getRandomItem(active_color_palette_indexes)
 
         // ensures that the selected palette is not the same as the previous one, 
         // when there is more then one active color
-        if ((color_palette_id) && (active_color_palettes.filter((num) => { num === 1 }).length > 1)) {
-            while ((id === color_palette_id)) {
+        if ((settings.colorPaletteId) && (settings.activeColorPalettes.filter((num) => { num === 1 }).length > 1)) {
+            while ((id === settings.colorPaletteId)) {
                 id = getRandomItem(active_color_palette_indexes);
             }
         }
@@ -128,8 +246,8 @@ class PlayfulClock {
             return
         }
 
-        color_palette_id = id;
-        let palette = color_palette_playful[color_palette_id];
+        settings.colorPaletteId = id;
+        let palette = color_palette_playful[settings.colorPaletteId];
         this.hourTens.style.color = palette[0]
         this.hourOnes.style.color = palette[1]
         this.dots.style.color = palette[2]
@@ -285,7 +403,7 @@ class SyncedInterval {
         this.name = name;
     }
 
-    setInterval(interval){
+    setInterval(interval) {
         this.interval = interval;
         if (this.stopped) return;
         this.restart();
@@ -347,39 +465,15 @@ const color_palette_playful = [
 
 const no_palette = "#ffffffdd" // white
 
-// standard settings
-const standard_color_interval_time = 60000;
-const standard_rotation_interval_time = 60000;
-const standard_timeout_interval_time = 900000;
-const standard_random_color_change_enabled = true;
-const standard_random_rotation_change_enabled = true;
-const standard_active_color_palettes = [1, 1, 1, 1, 1, 1, 1];
-const standard_timeout_darken_enabled = true;
-
-// global settings
-let color_interval;
-let rotation_interval;
-let timeout_interval;
-
-let color_interval_time = standard_color_interval_time;
-let rotation_interval_time = standard_rotation_interval_time;
-let timeoutDuration = standard_timeout_interval_time;
-
-let random_color_change_enabled = standard_random_color_change_enabled;
-let random_rotation_change_enabled = standard_random_rotation_change_enabled;
-let timeout_darken_enabled = standard_timeout_darken_enabled;
-
-let active_color_palettes = [...standard_active_color_palettes];
-let color_palette_id;
-
-let init_settings = false;
+// settings instance
+const settings = new Settings();
 
 // playful clock instance
 const playful_clock = new PlayfulClock($id("playful"));
 
 // timeout overlay instance
 const timeout_overlay = new TimeoutOverlay($id("timeout-overlay"));
-timeout_overlay.setDuration(timeoutDuration)
+timeout_overlay.setDuration(settings.timeoutDuration);
 
 // main menu instance
 const main_menu = new MainMenu(document.getElementsByClassName("main-menu")[0]);
@@ -392,39 +486,39 @@ const credits_sub_menu = new SubMenu($id("credits-sub-menu"));
 
 // sub menu button instances
 const color_sub_menu_button = new SubMenuButton(
-    $id("main-menu-color-button"), 
-    main_menu, 
+    $id("main-menu-color-button"),
+    main_menu,
     color_sub_menu
 );
 const rotation_sub_menu_button = new SubMenuButton(
-    $id("main-menu-rotatio-button"), 
-    main_menu, 
+    $id("main-menu-rotatio-button"),
+    main_menu,
     rotation_sub_menu
 );
 const timeout_sub_menu_button = new SubMenuButton(
-    $id("main-menu-timeout-button"), 
-    main_menu, 
+    $id("main-menu-timeout-button"),
+    main_menu,
     timeout_sub_menu
 );
 const credits_sub_menu_button = new SubMenuButton(
-    $id("main-menu-credits-button"), 
-    main_menu, 
+    $id("main-menu-credits-button"),
+    main_menu,
     credits_sub_menu
 );
 
 // intervals
 const timeInterval = new SyncedInterval(
-    60000, 
+    60000,
     playful_clock.updateTime.bind(playful_clock),
     "Time"
 );
 const colorInterval = new SyncedInterval(
-    color_interval_time, 
+    settings.colorIntervalTime,
     playful_clock.applyRandomColorPalette.bind(playful_clock),
     "Color"
 );
 const rotationInterval = new SyncedInterval(
-    rotation_interval_time, 
+    settings.rotationIntervalTime,
     playful_clock.applyRandomRotation.bind(playful_clock),
     "Rotation"
 );
@@ -447,68 +541,31 @@ function $id(id) { return document.getElementById(id) };
 function getRandomNumber(min, max) { return Math.floor(Math.random() * (Math.floor(max) - Math.ceil(min) + 1)) + Math.ceil(min) };
 function getRandomItem(list) { return list[Math.floor(Math.random() * list.length)] };
 
-function applyGlobalSettingsInDOM() {
-    random_color_rotation_checkbox.checked = random_color_change_enabled;
-    random_color_rotation_interval_select.value = color_interval_time;
-
-    for (let i = 0; i < palette_checkboxes.length; i++) {
-        palette_checkboxes[i].checked = active_color_palettes[i] === 1;
-    }
-
-    random_digit_rotation_checkbox.checked = random_rotation_change_enabled;
-    random_digit_rotation_interval_select.value = rotation_interval_time;
-
-    timeout_darken_checkbox.checked = timeout_darken_enabled;
-    timeout_interval_select.value = timeoutDuration;
-
-    init_settings = true;
-}
-
-// the reset function need extra work
-function resetColorSettings() {
-    random_color_rotation_interval_select.value = standard_color_interval_time;
-    random_color_rotation_checkbox.checked = standard_random_color_change_enabled;
-    for (const pc of palette_checkboxes) {
-        pc.checked = true;
-    }
-}
-
-function resetRotationSettings() {
-    random_digit_rotation_interval_select.value = standard_rotation_interval_time;
-    random_digit_rotation_checkbox.checked = standard_random_rotation_change_enabled;
-    playful_clock.applyZeroRotation();
-}
-
-function resetTimeoutSettings() {
-    timeout_darken_checkbox.checked = standard_timeout_darken_enabled;
-    timeout_interval_select.value = standard_timeout_interval_time;
-}
-
-
+// Initialize the application
 function init() {
-    applyGlobalSettingsInDOM();
+    settings.applyAllInDOM();
 
     playful_clock.updateTime()
 
-    if (random_color_change_enabled) {
-        playful_clock.applyRandomColorPalette()
+    if (settings.randomColorChangeEnabled) {
+        playful_clock.applyRandomColorPalette(settings.activeColorPalettes);
     }
-    if (random_rotation_change_enabled) {
+    if (settings.randomRotationChangeEnabled) {
         playful_clock.applyRandomRotation()
     }
 
     timeInterval.start();
 
-    if (random_color_change_enabled) {
+    if (settings.randomColorChangeEnabled) {
         colorInterval.start()
     }
 
-    if (random_rotation_change_enabled) {
+    if (settings.randomRotationChangeEnabled) {
         rotationInterval.start()
     }
 
-    if (timeout_darken_enabled) {
-        timeout_overlay.show(timeoutDuration);
+    if (settings.timeoutDarkenEnabled) {
+        timeout_overlay.show(settings.timeoutDuration);
     }
 }
 
@@ -522,65 +579,65 @@ document.body.addEventListener("click", function () {
 });
 
 playful_clock.element.addEventListener("click", function () {
-    if (random_color_change_enabled) {
-        playful_clock.applyRandomColorPalette();
+    if (settings.randomColorChangeEnabled) {
+        playful_clock.applyRandomColorPalette(settings.activeColorPalettes);
     }
-    if (random_rotation_change_enabled) {
+    if (settings.randomRotationChangeEnabled) {
         playful_clock.applyRandomRotation();
     }
     main_menu.showToggleButton()
 })
 
 random_color_rotation_checkbox.addEventListener("change", function () {
-    if (!init_settings) return
-    random_color_change_enabled = random_color_rotation_checkbox.checked;
+    if (!settings.appliedInDOM) return
+    settings.setRandomColorChangeEnabled(random_color_rotation_checkbox.checked);
     colorInterval.stop();
-    if (random_color_change_enabled) {
+    if (settings.randomColorChangeEnabled) {
         colorInterval.start();
     }
 })
 
 random_color_rotation_interval_select.addEventListener("change", function () {
-    if (!init_settings) return
-    color_interval_time = Number(random_color_rotation_interval_select.value);
-    colorInterval.setInterval(color_interval_time);
+    if (!settings.appliedInDOM) return
+    settings.setColorIntervalTime(Number(random_color_rotation_interval_select.value));
+    colorInterval.setInterval(settings.colorIntervalTime);
 })
 
 random_digit_rotation_checkbox.addEventListener("change", function () {
-    if (!init_settings) return
-    random_color_change_enabled = random_digit_rotation_checkbox.checked;
+    if (!settings.appliedInDOM) return
+    settings.setRandomRotationChangeEnabled(random_digit_rotation_checkbox.checked);
     rotationInterval.stop();
-    if (random_color_change_enabled) {
+    if (settings.randomRotationChangeEnabled) {
         rotationInterval.start();
     }
 })
 
 random_digit_rotation_interval_select.addEventListener("change", function () {
-    if (!init_settings) return
-    rotation_interval_time = Number(random_digit_rotation_interval_select.value);
-    rotationInterval.setInterval(rotation_interval_time);
+    if (!settings.appliedInDOM) return
+    settings.setRotationIntervalTime(Number(random_digit_rotation_interval_select.value));
+    rotationInterval.setInterval(settings);
 })
 
 timeout_interval_select.addEventListener("change", function () {
-    if (!init_settings) return
-    timeoutDuration = Number(timeout_interval_select.value);
-    timeout_overlay.setDuration(timeoutDuration);
+    if (!settings.appliedInDOM) return
+    settings.setTimeoutDuration(Number(timeout_interval_select.value));
+    timeout_overlay.setDuration(settings.timeoutDuration);
 })
 
-reset_color_settings_button.addEventListener("click", resetColorSettings)
+reset_color_settings_button.addEventListener("click", settings.resetColorSettings.bind(settings))
 straighten_digits_button.addEventListener("click", playful_clock.applyZeroRotation)
-reset_rotation_settings_button.addEventListener("click", resetRotationSettings)
-reset_timeout_settings_button.addEventListener("click", resetTimeoutSettings)
+reset_rotation_settings_button.addEventListener("click", settings.resetRotationSettings.bind(settings))
+reset_timeout_settings_button.addEventListener("click", settings.resetTimeoutSettings.bind(settings))
 
 for (const pc of palette_checkboxes) {
     pc.addEventListener("change", function (e) {
-        if (!init_settings) return
+        if (!settings.appliedInDOM) return
         const inputs = Array.from(e.target.parentElement.children).filter((el) => el.tagName === "INPUT");
         const index = inputs.indexOf(e.target);
         if (e.target.checked) {
-            active_color_palettes[index] = 1;
+            settings.activeColorPalettes[index] = 1;
         } else {
-            active_color_palettes[index] = 0;
+            settings.activeColorPalettes[index] = 0;
         }
     })
 }
