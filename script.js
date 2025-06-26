@@ -5,19 +5,19 @@ class App {
         }
         App._instance = this;
 
-        
+
     }
 
     initialize() {
         settings.applyAllInDOM();
 
-        playful_clock.updateTime()
+        nunito_clock.updateTime()
 
         if (settings.randomColorChangeEnabled) {
-            playful_clock.applyRandomColorPalette(settings.activeColorPalettes);
+            nunito_clock.applyRandomColorPalette(settings.activeColorPalettes);
         }
         if (settings.randomRotationChangeEnabled) {
-            playful_clock.applyRandomRotation()
+            nunito_clock.applyRandomRotation()
         }
 
         timeInterval.start();
@@ -155,8 +155,8 @@ class Settings {
 }
 
 class TimeoutOverlay {
-    constructor(element) {
-        this.element = element;
+    constructor() {
+        this.element = $id("timeout-overlay");
         this.timeout = null;
         this.isVisible = false;
         this.timeoutDuration = 5000; // default duration
@@ -217,14 +217,91 @@ class TimeoutOverlay {
 
 }
 
-class PlayfulClock {
+class FontSlider {
+    constructor() {
+        this.slider = document.getElementsByClassName("slider")[0];
+        this.slidesContainer = document.getElementsByClassName("slides")[0];
+        this.slides = Array.from(this.slidesContainer.children);
+        this.totalSlides = this.slides.length;
+
+        this.currentIndex = 0;
+        this.startX = 0;
+        this.currentTranslate = 0;
+        this.prevTranslate = 0;
+        this.isDragging = false;
+        this.animationID = 0;
+
+        // Bind Events
+        this.slidesContainer.addEventListener('touchstart', this.touchStart.bind(this), { passive: true });
+        this.slidesContainer.addEventListener('touchmove', this.touchMove.bind(this), { passive: true });
+        this.slidesContainer.addEventListener('touchend', this.touchEnd.bind(this));
+
+        this.slidesContainer.addEventListener('mousedown', this.touchStart.bind(this));
+        this.slidesContainer.addEventListener('mousemove', this.touchMove.bind(this));
+        this.slidesContainer.addEventListener('mouseup', this.touchEnd.bind(this));
+        this.slidesContainer.addEventListener('mouseleave', () => this.isDragging && this.touchEnd().bind(this));
+
+        // Handle resize
+        window.addEventListener('resize', this.setSlidePositionByIndex.bind(this));
+
+    }
+
+    // Core translate logic
+    setSliderPosition() {
+        this.slidesContainer.style.transform = `translateX(${this.currentTranslate}px)`;
+    }
+
+    animation() {
+        this.setSliderPosition();
+        if (this.isDragging) requestAnimationFrame(this.animation.bind(this));
+    }
+
+    getPositionX(e) {
+        return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+    }
+
+    // Dragging handlers
+    touchStart(e) {
+        this.isDragging = true;
+        this.startX = this.getPositionX(e);
+        this.animationID = requestAnimationFrame(this.animation.bind(this));
+        this.slidesContainer.style.transition = 'none';
+    }
+
+    touchMove(e) {
+        if (!this.isDragging) return;
+        const dx = this.getPositionX(e) - this.startX;
+        this.currentTranslate = this.prevTranslate + dx;
+    }
+
+    touchEnd() {
+        cancelAnimationFrame(this.animationID);
+        this.isDragging = false;
+
+        const movedBy = this.currentTranslate - this.prevTranslate;
+
+        if (movedBy < -50 && this.currentIndex < this.totalSlides - 1) this.currentIndex++;
+        else if (movedBy > 50 && this.currentIndex > 0) this.currentIndex--;
+
+        this.setSlidePositionByIndex()
+    }
+
+    setSlidePositionByIndex() {
+        this.currentTranslate = -this.currentIndex * this.slider.offsetWidth;
+        this.prevTranslate = this.currentTranslate;
+        this.slidesContainer.style.transition = 'transform 0.3s ease';
+        this.setSliderPosition();
+    }
+}
+
+class Clock {
     constructor(element) {
         this.element = element;
-        this.hourTens = element.getElementsByClassName("time")[0];
-        this.hourOnes = element.getElementsByClassName("time")[1];
-        this.dots = element.getElementsByClassName("time")[2];
-        this.minutesTens = element.getElementsByClassName("time")[3];
-        this.minutesOnes = element.getElementsByClassName("time")[4];
+        this.hourTens = this.element.getElementsByClassName("time")[0];
+        this.hourOnes = this.element.getElementsByClassName("time")[1];
+        this.dots = this.element.getElementsByClassName("time")[2];
+        this.minutesTens = this.element.getElementsByClassName("time")[3];
+        this.minutesOnes = this.element.getElementsByClassName("time")[4];
 
         this.colorPalettes = [
             ["#cc5803dd", "#e2711ddd", "#ff9505dd", "#ffb627dd", "#ffc971dd"], //orange
@@ -238,6 +315,8 @@ class PlayfulClock {
         this.noPalette = "#ffffffdd";
 
         this.element.addEventListener("click", this.clockClicked.bind(this));
+        this.updateTime();
+        this.applyRandomColorPalette()
     }
 
     updateTime() {
@@ -266,12 +345,9 @@ class PlayfulClock {
         }
     }
 
-    applyRandomRotation() {
-        document.documentElement.style.setProperty("--playful-hour-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
-        document.documentElement.style.setProperty("--playful-hour-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
-        document.documentElement.style.setProperty("--playful-dots-rotation", `${getRandomNumber(-10, 10)}deg`);
-        document.documentElement.style.setProperty("--playful-minute-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
-        document.documentElement.style.setProperty("--playful-minute-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
+    clockClicked() {
+        this.applyRandomColorPalette(settings.activeColorPalettes);
+        main_menu.showToggleButton();
     }
 
     applyRandomColorPalette() {
@@ -305,6 +381,38 @@ class PlayfulClock {
         this.minutesTens.style.color = palette[3]
         this.minutesOnes.style.color = palette[4]
     }
+}
+
+class KeniaClock extends Clock {
+    constructor() {
+        super($id("kenia"));
+    }
+}
+
+class SixCapsClock extends Clock {
+    constructor() {
+        super($id("sixcaps"));
+    }
+}
+
+class BadeenClock extends Clock {
+    constructor() {
+        super($id("badeen"));
+    }
+}
+
+class NunitoClock extends Clock {
+    constructor() {
+        super($id("nunito"));
+    }
+
+    applyRandomRotation() {
+        document.documentElement.style.setProperty("--playful-hour-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
+        document.documentElement.style.setProperty("--playful-hour-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
+        document.documentElement.style.setProperty("--playful-dots-rotation", `${getRandomNumber(-10, 10)}deg`);
+        document.documentElement.style.setProperty("--playful-minute-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
+        document.documentElement.style.setProperty("--playful-minute-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
+    }
 
     applyZeroRotation() {
         document.documentElement.style.setProperty("--playful-hour-tens-rotation", `0deg`);
@@ -323,7 +431,6 @@ class PlayfulClock {
         }
         main_menu.showToggleButton();
     }
-
 }
 
 class MainMenu {
@@ -533,7 +640,7 @@ class ColorSubMenu extends SubMenu {
 
     resetColorSettings() {
         settings.resetColorSettings();
-        playful_clock.applyRandomColorPalette(settings.activeColorPalettes);
+        nunito_clock.applyRandomColorPalette(settings.activeColorPalettes);
     }
 
     togglePalette(e) {
@@ -577,12 +684,12 @@ class RotationSubMenu extends SubMenu {
     }
 
     straightenDigits() {
-        playful_clock.applyZeroRotation();
+        nunito_clock.applyZeroRotation();
     }
 
     resetRotationSettings() {
         settings.resetRotationSettings();
-        playful_clock.applyZeroRotation();
+        nunito_clock.applyZeroRotation();
     }
 
 }
@@ -623,11 +730,16 @@ const app = new App();
 // settings instance
 const settings = new Settings();
 
+const font_slider = new FontSlider();
+
 // playful clock instance
-const playful_clock = new PlayfulClock($id("playful"));
+const nunito_clock = new NunitoClock();
+const kenia_clock = new KeniaClock();
+const sixcaps_clock = new SixCapsClock();
+const badeen_clock = new BadeenClock();
 
 // timeout overlay instance
-const timeout_overlay = new TimeoutOverlay($id("timeout-overlay"));
+const timeout_overlay = new TimeoutOverlay();
 timeout_overlay.setDuration(settings.timeoutDuration);
 
 // main menu instance
@@ -664,17 +776,17 @@ const credits_sub_menu_button = new SubMenuButton(
 // intervals
 const timeInterval = new SyncedInterval(
     60000,
-    playful_clock.updateTime.bind(playful_clock),
+    nunito_clock.updateTime.bind(nunito_clock),
     "Time"
 );
 const colorInterval = new SyncedInterval(
     settings.colorIntervalTime,
-    playful_clock.applyRandomColorPalette.bind(playful_clock),
+    nunito_clock.applyRandomColorPalette.bind(nunito_clock),
     "Color"
 );
 const rotationInterval = new SyncedInterval(
     settings.rotationIntervalTime,
-    playful_clock.applyRandomRotation.bind(playful_clock),
+    nunito_clock.applyRandomRotation.bind(nunito_clock),
     "Rotation"
 );
 

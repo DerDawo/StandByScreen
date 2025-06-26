@@ -5,6 +5,27 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Kenia';
+    src: url('./src/Kenia-Regular.ttf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SixCaps';
+    src: url('./src/SixCaps-Regular.ttf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Badeen';
+    src: url('./src/BadeenDisplay-Regular.ttf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+}
+
 :root {
     --playful-hour-tens-rotation: 0deg;
     --playful-hour-ones-rotation: 0deg;
