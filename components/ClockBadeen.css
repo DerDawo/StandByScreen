@@ -19,6 +19,7 @@
     transition: 1s;
     text-shadow: #000000 2px 2px 10px;
     margin-top: -3rem;
+    text-align: center;
 }
 
 .time>p {

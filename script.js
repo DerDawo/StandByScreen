@@ -353,7 +353,7 @@ class Clock {
     applyRandomColorPalette() {
         // ensures that the selected is always an active on
         let active_color_palette_indexes = settings.activeColorPalettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
-
+        
         let id = getRandomItem(active_color_palette_indexes)
 
         // ensures that the selected palette is not the same as the previous one, 
@@ -365,15 +365,30 @@ class Clock {
         }
 
         if (id === undefined) {
-            this.hourTens.style.color = this.noPalette
-            this.hourOnes.style.color = this.noPalette
-            this.dots.style.color = this.noPalette
-            this.minutesTens.style.color = this.noPalette
-            this.minutesOnes.style.color = this.noPalette
+            this.applyNoPalette();
             return
         }
 
         settings.colorPaletteId = id;
+        this.applyColorPalette();
+    }
+
+    cycleThroughColorPalettes() {
+        let active_color_palette_indexes = settings.activeColorPalettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
+
+        if (active_color_palette_indexes.length === 0) {
+            this.applyNoPalette();
+            return;
+        }
+
+        settings.colorPaletteId = (settings.colorPaletteId + 1) % active_color_palette_indexes.length;
+        if (settings.colorPaletteId === 0) {
+            settings.colorPaletteId = active_color_palette_indexes[0];
+        }
+        this.applyColorPalette();
+    }
+
+    applyColorPalette(){
         let palette = this.colorPalettes[settings.colorPaletteId];
         this.hourTens.style.color = palette[0]
         this.hourOnes.style.color = palette[1]
@@ -381,11 +396,24 @@ class Clock {
         this.minutesTens.style.color = palette[3]
         this.minutesOnes.style.color = palette[4]
     }
+
+    applyNoPalette(){
+        this.hourTens.style.color = this.noPalette
+        this.hourOnes.style.color = this.noPalette
+        this.dots.style.color = this.noPalette
+        this.minutesTens.style.color = this.noPalette
+        this.minutesOnes.style.color = this.noPalette
+    }
 }
 
 class KeniaClock extends Clock {
     constructor() {
         super($id("kenia"));
+    }
+
+    clockClicked() {
+        this.cycleThroughColorPalettes();
+        main_menu.showToggleButton();
     }
 }
 
@@ -393,11 +421,21 @@ class SixCapsClock extends Clock {
     constructor() {
         super($id("sixcaps"));
     }
+    
+    clockClicked() {
+        this.cycleThroughColorPalettes();
+        main_menu.showToggleButton();
+    }
 }
 
 class BadeenClock extends Clock {
     constructor() {
         super($id("badeen"));
+    }
+
+    clockClicked() {
+        this.cycleThroughColorPalettes();
+        main_menu.showToggleButton();
     }
 }
 
