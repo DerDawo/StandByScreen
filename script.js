@@ -80,17 +80,18 @@ class Settings {
         ["#ff0a54dd", "#ff477edd", "#ff5c8add", "#ff7096dd", "#ff85a1dd"], //pink
         ["#ffee70dd", "#ffec5cdd", "#ffe747dd", "#ffe433dd", "#ffdd1fdd"] //yellow
     ]
-    #activeColorPalettes = this.#colorPalettes.map(function(){return 1}); // all palettes active
+    #activeColorPalettes = this.#colorPalettes.map(function () { return 1 }); // all palettes active
     #colorPaletteId = 0; // default palette id
     #noPalette = "#ffffffdd";
-    
+    #fonts = ["Nunito", "Kenia", "SixCaps", "BadeenDisplay"];
+
     constructor() {
-        
+
         if (Settings._instance) {
             throw new Error("Settings can't be instantiated more than once.")
         }
         Settings._instance = this;
-        
+
         this.randomColorChangeEnabled = this.#randomColorChangeEnabled;
         this.randomRotationChangeEnabled = this.#randomRotationChangeEnabled;
         this.timeoutDarkenEnabled = this.#timeoutDarkenEnabled;
@@ -101,6 +102,7 @@ class Settings {
         this.activeColorPalettes = this.#activeColorPalettes; // all palettes active
         this.colorPaletteId = this.#colorPaletteId; // default palette id
         this.noPalette = this.#noPalette;
+        this.fonts = this.#fonts; // predefined fonts
         this.appliedInDOM = false;
     }
 
@@ -320,8 +322,14 @@ class FontSlider {
 
         const movedBy = this.currentTranslate - this.prevTranslate;
 
-        if (movedBy < -50 && this.currentIndex < this.totalSlides - 1) this.currentIndex++;
-        else if (movedBy > 50 && this.currentIndex > 0) this.currentIndex--;
+        if (movedBy < -50 && this.currentIndex < this.totalSlides - 1) {
+            this.currentIndex++;
+            font_snackbar.show(settings.fonts[this.currentIndex])
+        }
+        else if (movedBy > 50 && this.currentIndex > 0){
+            this.currentIndex--;
+            font_snackbar.show(settings.fonts[this.currentIndex])
+        } 
 
         this.setSlidePositionByIndex()
     }
@@ -332,6 +340,60 @@ class FontSlider {
         this.slidesContainer.style.transition = 'transform 0.3s ease';
         this.setSliderPosition();
     }
+}
+
+class FontSnackBar {
+    constructor() {
+        this.container = $id('snackbar-container');
+        this.currentSnackbar = null;
+        this.fadeTimeout = null;
+        this.removeTimeout = null;
+    }
+
+    show(message, duration = 3000) {
+
+        // If one exists, fade it out first
+        if (this.currentSnackbar) {
+            clearTimeout(this.fadeTimeout);
+            clearTimeout(this.removeTimeout);
+
+            this.currentSnackbar.classList.remove('show'); // starts fade out
+
+            // After fade-out transition, remove it and show new one
+            this.fadeTimeout = setTimeout(() => {
+                this.container.removeChild(this.currentSnackbar);
+                this.currentSnackbar = null;
+                this.#createAndShow(message, duration);
+            }, 300); // must match CSS transition duration
+        } else {
+            this.#createAndShow(message, duration);
+        }
+    }
+
+    #createAndShow(message, duration) {
+        const snackbar = document.createElement('div');
+        snackbar.className = 'snackbar';
+        snackbar.textContent = message;
+
+        this.container.appendChild(snackbar);
+
+        // Force reflow to ensure the transition starts
+        void snackbar.offsetWidth;
+        snackbar.classList.add('show');
+
+        this.currentSnackbar = snackbar;
+        console.log()
+        // Auto-dismiss after `duration`
+        this.removeTimeout = setTimeout(() => {
+            snackbar.classList.remove('show');
+            // Remove from DOM after fade-out
+            this.fadeTimeout = setTimeout(() => {
+                if (snackbar.parentNode) snackbar.parentNode.removeChild(snackbar);
+                this.currentSnackbar = null;
+            }, 300);
+        }, duration);
+    }
+
 }
 
 class Clock {
@@ -757,7 +819,11 @@ class TimeoutSubMenu extends SubMenu {
 // settings instance
 const settings = new Settings();
 
+// font_slider instance
 const font_slider = new FontSlider();
+
+// font_snackbar instance
+const font_snackbar = new FontSnackBar();
 
 // playful clock instance
 const nunito_clock = new NunitoClock();
