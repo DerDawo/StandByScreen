@@ -4,20 +4,18 @@ class App {
             throw new Error("App can't be instantiated more than once.")
         }
         App._instance = this;
-
-        
     }
 
     initialize() {
         settings.applyAllInDOM();
 
-        playful_clock.updateTime()
+        nunito_clock.updateTime()
 
         if (settings.randomColorChangeEnabled) {
-            playful_clock.applyRandomColorPalette(settings.activeColorPalettes);
+            app.applyRandomColorPalette();
         }
         if (settings.randomRotationChangeEnabled) {
-            playful_clock.applyRandomRotation()
+            nunito_clock.applyRandomRotation()
         }
 
         timeInterval.start();
@@ -34,6 +32,36 @@ class App {
             timeout_overlay.show(settings.timeoutDuration);
         }
     }
+
+    applyRandomColorPalette() {
+        // ensures that the selected is always an active on
+        let active_color_palette_indexes = settings.activeColorPalettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
+
+        let id = getRandomItem(active_color_palette_indexes)
+
+        // ensures that the selected palette is not the same as the previous one, 
+        // when there is more then one active color
+        if ((settings.colorPaletteId) && (settings.activeColorPalettes.filter((num) => { num === 1 }).length > 1)) {
+            while ((id === settings.colorPaletteId)) {
+                id = getRandomItem(active_color_palette_indexes);
+            }
+        }
+
+        if (id === undefined) {
+            nunito_clock.applyNoPalette();
+            kenia_clock.applyNoPalette();
+            sixcaps_clock.applyNoPalette();
+            badeen_clock.applyNoPalette();
+            return
+        }
+
+        settings.colorPaletteId = id;
+        nunito_clock.applyColorPalette();
+        kenia_clock.applyColorPalette();
+        sixcaps_clock.applyColorPalette();
+        badeen_clock.applyColorPalette();
+    }
+
 }
 
 class Settings {
@@ -43,8 +71,19 @@ class Settings {
     #colorIntervalTime = 60000; // 1 minute
     #rotationIntervalTime = 60000; // 1 minute
     #timeoutDuration = 900000; // 15 minutes
-    #activeColorPalettes = [1, 1, 1, 1, 1, 1, 1]; // all palettes active
+    #colorPalettes = [
+        ["#cc5803dd", "#e2711ddd", "#ff9505dd", "#ffb627dd", "#ffc971dd"], //orange
+        ["#ffd6ffdd", "#e7c6ffdd", "#c8b6ffdd", "#b8c0ffdd", "#bbd0ffdd"], //purple
+        ["#f08080dd", "#f4978edd", "#f8ad9ddd", "#fbc4abdd", "#ffdab9dd"], //coral
+        ["#d8f3dcdd", "#b7e4c7dd", "#95d5b2dd", "#74c69ddd", "#52b788dd"], //green
+        ["#d7e3fcdd", "#ccdbfddd", "#c1d3fedd", "#b6ccfedd", "#abc4ffdd"], //blue
+        ["#ff0a54dd", "#ff477edd", "#ff5c8add", "#ff7096dd", "#ff85a1dd"], //pink
+        ["#ffee70dd", "#ffec5cdd", "#ffe747dd", "#ffe433dd", "#ffdd1fdd"] //yellow
+    ]
+    #activeColorPalettes = this.#colorPalettes.map(function () { return 1 }); // all palettes active
     #colorPaletteId = 0; // default palette id
+    #noPalette = "#ffffffdd";
+    #fonts = ["Nunito", "Kenia", "SixCaps", "BadeenDisplay"];
 
     constructor() {
 
@@ -59,8 +98,11 @@ class Settings {
         this.colorIntervalTime = this.#colorIntervalTime; // 1 minute
         this.rotationIntervalTime = this.#rotationIntervalTime; // 1 minute
         this.timeoutDuration = this.#timeoutDuration; // 15 minutes
+        this.colorPalettes = this.#colorPalettes; // predefined color palettes
         this.activeColorPalettes = this.#activeColorPalettes; // all palettes active
         this.colorPaletteId = this.#colorPaletteId; // default palette id
+        this.noPalette = this.#noPalette;
+        this.fonts = this.#fonts; // predefined fonts
         this.appliedInDOM = false;
     }
 
@@ -155,8 +197,8 @@ class Settings {
 }
 
 class TimeoutOverlay {
-    constructor(element) {
-        this.element = element;
+    constructor() {
+        this.element = $id("timeout-overlay");
         this.timeout = null;
         this.isVisible = false;
         this.timeoutDuration = 5000; // default duration
@@ -217,27 +259,154 @@ class TimeoutOverlay {
 
 }
 
-class PlayfulClock {
+class FontSlider {
+    constructor() {
+        this.slider = document.getElementsByClassName("slider")[0];
+        this.slidesContainer = document.getElementsByClassName("slides")[0];
+        this.slides = Array.from(this.slidesContainer.children);
+        this.totalSlides = this.slides.length;
+
+        this.currentIndex = 0;
+        this.startX = 0;
+        this.currentTranslate = 0;
+        this.prevTranslate = 0;
+        this.isDragging = false;
+        this.animationID = 0;
+
+        // Bind Events
+        this.slidesContainer.addEventListener('touchstart', this.touchStart.bind(this), { passive: true });
+        this.slidesContainer.addEventListener('touchmove', this.touchMove.bind(this), { passive: true });
+        this.slidesContainer.addEventListener('touchend', this.touchEnd.bind(this));
+
+        this.slidesContainer.addEventListener('mousedown', this.touchStart.bind(this));
+        this.slidesContainer.addEventListener('mousemove', this.touchMove.bind(this));
+        this.slidesContainer.addEventListener('mouseup', this.touchEnd.bind(this));
+        this.slidesContainer.addEventListener('mouseleave', () => this.isDragging && this.touchEnd().bind(this));
+
+        // Handle resize
+        window.addEventListener('resize', this.setSlidePositionByIndex.bind(this));
+
+    }
+
+    // Core translate logic
+    setSliderPosition() {
+        this.slidesContainer.style.transform = `translateX(${this.currentTranslate}px)`;
+    }
+
+    animation() {
+        this.setSliderPosition();
+        if (this.isDragging) requestAnimationFrame(this.animation.bind(this));
+    }
+
+    getPositionX(e) {
+        return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+    }
+
+    // Dragging handlers
+    touchStart(e) {
+        this.isDragging = true;
+        this.startX = this.getPositionX(e);
+        this.animationID = requestAnimationFrame(this.animation.bind(this));
+        this.slidesContainer.style.transition = 'none';
+    }
+
+    touchMove(e) {
+        if (!this.isDragging) return;
+        const dx = this.getPositionX(e) - this.startX;
+        this.currentTranslate = this.prevTranslate + dx;
+    }
+
+    touchEnd() {
+        cancelAnimationFrame(this.animationID);
+        this.isDragging = false;
+
+        const movedBy = this.currentTranslate - this.prevTranslate;
+
+        if (movedBy < -50 && this.currentIndex < this.totalSlides - 1) {
+            this.currentIndex++;
+            font_snackbar.show(settings.fonts[this.currentIndex])
+        }
+        else if (movedBy > 50 && this.currentIndex > 0){
+            this.currentIndex--;
+            font_snackbar.show(settings.fonts[this.currentIndex])
+        } 
+
+        this.setSlidePositionByIndex()
+    }
+
+    setSlidePositionByIndex() {
+        this.currentTranslate = -this.currentIndex * this.slider.offsetWidth;
+        this.prevTranslate = this.currentTranslate;
+        this.slidesContainer.style.transition = 'transform 0.3s ease';
+        this.setSliderPosition();
+    }
+}
+
+class FontSnackBar {
+    constructor() {
+        this.container = $id('snackbar-container');
+        this.currentSnackbar = null;
+        this.fadeTimeout = null;
+        this.removeTimeout = null;
+    }
+
+    show(message, duration = 3000) {
+
+        // If one exists, fade it out first
+        if (this.currentSnackbar) {
+            clearTimeout(this.fadeTimeout);
+            clearTimeout(this.removeTimeout);
+
+            this.currentSnackbar.classList.remove('show'); // starts fade out
+
+            // After fade-out transition, remove it and show new one
+            this.fadeTimeout = setTimeout(() => {
+                this.container.removeChild(this.currentSnackbar);
+                this.currentSnackbar = null;
+                this.#createAndShow(message, duration);
+            }, 300); // must match CSS transition duration
+        } else {
+            this.#createAndShow(message, duration);
+        }
+    }
+
+    #createAndShow(message, duration) {
+        const snackbar = document.createElement('div');
+        snackbar.className = 'snackbar';
+        snackbar.textContent = message;
+
+        this.container.appendChild(snackbar);
+
+        // Force reflow to ensure the transition starts
+        void snackbar.offsetWidth;
+        snackbar.classList.add('show');
+
+        this.currentSnackbar = snackbar;
+        console.log()
+        // Auto-dismiss after `duration`
+        this.removeTimeout = setTimeout(() => {
+            snackbar.classList.remove('show');
+            // Remove from DOM after fade-out
+            this.fadeTimeout = setTimeout(() => {
+                if (snackbar.parentNode) snackbar.parentNode.removeChild(snackbar);
+                this.currentSnackbar = null;
+            }, 300);
+        }, duration);
+    }
+
+}
+
+class Clock {
     constructor(element) {
         this.element = element;
-        this.hourTens = element.getElementsByClassName("time")[0];
-        this.hourOnes = element.getElementsByClassName("time")[1];
-        this.dots = element.getElementsByClassName("time")[2];
-        this.minutesTens = element.getElementsByClassName("time")[3];
-        this.minutesOnes = element.getElementsByClassName("time")[4];
-
-        this.colorPalettes = [
-            ["#cc5803dd", "#e2711ddd", "#ff9505dd", "#ffb627dd", "#ffc971dd"], //orange
-            ["#ffd6ffdd", "#e7c6ffdd", "#c8b6ffdd", "#b8c0ffdd", "#bbd0ffdd"], //purple
-            ["#f08080dd", "#f4978edd", "#f8ad9ddd", "#fbc4abdd", "#ffdab9dd"], //coral
-            ["#d8f3dcdd", "#b7e4c7dd", "#95d5b2dd", "#74c69ddd", "#52b788dd"], //green
-            ["#d7e3fcdd", "#ccdbfddd", "#c1d3fedd", "#b6ccfedd", "#abc4ffdd"], //blue
-            ["#ff0a54dd", "#ff477edd", "#ff5c8add", "#ff7096dd", "#ff85a1dd"], //pink
-            ["#ffee70dd", "#ffec5cdd", "#ffe747dd", "#ffe433dd", "#ffdd1fdd"] //yellow
-        ]
-        this.noPalette = "#ffffffdd";
+        this.hourTens = this.element.getElementsByClassName("time")[0];
+        this.hourOnes = this.element.getElementsByClassName("time")[1];
+        this.dots = this.element.getElementsByClassName("time")[2];
+        this.minutesTens = this.element.getElementsByClassName("time")[3];
+        this.minutesOnes = this.element.getElementsByClassName("time")[4];
 
         this.element.addEventListener("click", this.clockClicked.bind(this));
+        this.updateTime();
     }
 
     updateTime() {
@@ -266,44 +435,73 @@ class PlayfulClock {
         }
     }
 
+    clockClicked() {
+        app.applyRandomColorPalette();
+        main_menu.showToggleButton();
+    }
+
+    cycleThroughColorPalettes() {
+        let active_color_palette_indexes = settings.activeColorPalettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
+
+        if (active_color_palette_indexes.length === 0) {
+            this.applyNoPalette();
+            return;
+        }
+
+        settings.colorPaletteId = (settings.colorPaletteId + 1) % active_color_palette_indexes.length;
+        if (settings.colorPaletteId === 0) {
+            settings.colorPaletteId = active_color_palette_indexes[0];
+        }
+        this.applyColorPalette();
+    }
+
+    applyColorPalette() {
+        let palette = settings.colorPalettes[settings.colorPaletteId];
+        this.hourTens.style.color = palette[0]
+        this.hourOnes.style.color = palette[1]
+        this.dots.style.color = palette[2]
+        this.minutesTens.style.color = palette[3]
+        this.minutesOnes.style.color = palette[4]
+    }
+
+    applyNoPalette() {
+        this.hourTens.style.color = settings.noPalette
+        this.hourOnes.style.color = settings.noPalette
+        this.dots.style.color = settings.noPalette
+        this.minutesTens.style.color = settings.noPalette
+        this.minutesOnes.style.color = settings.noPalette
+    }
+}
+
+class KeniaClock extends Clock {
+    constructor() {
+        super($id("kenia"));
+    }
+}
+
+class SixCapsClock extends Clock {
+    constructor() {
+        super($id("sixcaps"));
+    }
+}
+
+class BadeenClock extends Clock {
+    constructor() {
+        super($id("badeen"));
+    }
+}
+
+class NunitoClock extends Clock {
+    constructor() {
+        super($id("nunito"));
+    }
+
     applyRandomRotation() {
         document.documentElement.style.setProperty("--playful-hour-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
         document.documentElement.style.setProperty("--playful-hour-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
         document.documentElement.style.setProperty("--playful-dots-rotation", `${getRandomNumber(-10, 10)}deg`);
         document.documentElement.style.setProperty("--playful-minute-tens-rotation", `${getRandomNumber(-10, 10)}deg`);
         document.documentElement.style.setProperty("--playful-minute-ones-rotation", `${getRandomNumber(-10, 10)}deg`);
-    }
-
-    applyRandomColorPalette() {
-        // ensures that the selected is always an active on
-        let active_color_palette_indexes = settings.activeColorPalettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
-
-        let id = getRandomItem(active_color_palette_indexes)
-
-        // ensures that the selected palette is not the same as the previous one, 
-        // when there is more then one active color
-        if ((settings.colorPaletteId) && (settings.activeColorPalettes.filter((num) => { num === 1 }).length > 1)) {
-            while ((id === settings.colorPaletteId)) {
-                id = getRandomItem(active_color_palette_indexes);
-            }
-        }
-
-        if (id === undefined) {
-            this.hourTens.style.color = this.noPalette
-            this.hourOnes.style.color = this.noPalette
-            this.dots.style.color = this.noPalette
-            this.minutesTens.style.color = this.noPalette
-            this.minutesOnes.style.color = this.noPalette
-            return
-        }
-
-        settings.colorPaletteId = id;
-        let palette = this.colorPalettes[settings.colorPaletteId];
-        this.hourTens.style.color = palette[0]
-        this.hourOnes.style.color = palette[1]
-        this.dots.style.color = palette[2]
-        this.minutesTens.style.color = palette[3]
-        this.minutesOnes.style.color = palette[4]
     }
 
     applyZeroRotation() {
@@ -316,14 +514,13 @@ class PlayfulClock {
 
     clockClicked() {
         if (settings.randomColorChangeEnabled) {
-            this.applyRandomColorPalette(settings.activeColorPalettes);
+            app.applyRandomColorPalette();
         }
         if (settings.randomRotationChangeEnabled) {
             this.applyRandomRotation();
         }
         main_menu.showToggleButton();
     }
-
 }
 
 class MainMenu {
@@ -533,7 +730,7 @@ class ColorSubMenu extends SubMenu {
 
     resetColorSettings() {
         settings.resetColorSettings();
-        playful_clock.applyRandomColorPalette(settings.activeColorPalettes);
+        app.applyRandomColorPalette();
     }
 
     togglePalette(e) {
@@ -577,12 +774,12 @@ class RotationSubMenu extends SubMenu {
     }
 
     straightenDigits() {
-        playful_clock.applyZeroRotation();
+        nunito_clock.applyZeroRotation();
     }
 
     resetRotationSettings() {
         settings.resetRotationSettings();
-        playful_clock.applyZeroRotation();
+        nunito_clock.applyZeroRotation();
     }
 
 }
@@ -617,17 +814,25 @@ class TimeoutSubMenu extends SubMenu {
     }
 }
 
-// Application instance
-const app = new App();
+
 
 // settings instance
 const settings = new Settings();
 
+// font_slider instance
+const font_slider = new FontSlider();
+
+// font_snackbar instance
+const font_snackbar = new FontSnackBar();
+
 // playful clock instance
-const playful_clock = new PlayfulClock($id("playful"));
+const nunito_clock = new NunitoClock();
+const kenia_clock = new KeniaClock();
+const sixcaps_clock = new SixCapsClock();
+const badeen_clock = new BadeenClock();
 
 // timeout overlay instance
-const timeout_overlay = new TimeoutOverlay($id("timeout-overlay"));
+const timeout_overlay = new TimeoutOverlay();
 timeout_overlay.setDuration(settings.timeoutDuration);
 
 // main menu instance
@@ -661,20 +866,23 @@ const credits_sub_menu_button = new SubMenuButton(
     credits_sub_menu
 );
 
+// Application instance
+const app = new App();
+
 // intervals
 const timeInterval = new SyncedInterval(
     60000,
-    playful_clock.updateTime.bind(playful_clock),
+    nunito_clock.updateTime.bind(nunito_clock),
     "Time"
 );
 const colorInterval = new SyncedInterval(
     settings.colorIntervalTime,
-    playful_clock.applyRandomColorPalette.bind(playful_clock),
+    app.applyRandomColorPalette,
     "Color"
 );
 const rotationInterval = new SyncedInterval(
     settings.rotationIntervalTime,
-    playful_clock.applyRandomRotation.bind(playful_clock),
+    nunito_clock.applyRandomRotation.bind(nunito_clock),
     "Rotation"
 );
 
@@ -690,6 +898,8 @@ main_menu.setSubMenuButtons([
     timeout_sub_menu_button,
     credits_sub_menu_button
 ]);
+
+
 
 // utility functions
 function $id(id) { return document.getElementById(id) };

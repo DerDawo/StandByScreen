@@ -1,0 +1,47 @@
+/*General Sytling of Time Digits*/
+#kenia>.time-wrapper>.time {
+    line-height: 0;
+    padding: 0;
+    font-family: 'Kenia', 'Arial', sans-serif;
+    font-size: clamp(3rem, 100vmin, 100dvh);
+    transition: 1s;
+    text-shadow: #000000 2px 2px 10px;
+    font-weight: bold;
+    margin-left: -2.75rem;
+    margin-right: -2.75rem;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.time>p {
+    transition: 1s;
+    margin-top: 50dvh;
+}
+
+#kenia>.time-wrapper>.hour-tens>p {
+    transform: rotate(0);
+}
+
+#kenia>.time-wrapper>.hour-ones>p {
+    transform: rotate(0);
+}
+
+#kenia>.time-wrapper>.hour-ones {
+    margin-right: 0;
+}
+
+#kenia>.time-wrapper>.dots>p {
+    transform: translate(0, -2rem) rotate(0);
+}
+
+#kenia>.time-wrapper>.minute-tens {
+    margin-left: 0;
+}
+
+#kenia>.time-wrapper>.minute-tens>p {
+    transform: rotate(0);
+}
+
+#kenia>.time-wrapper>.minute-ones>p {
+    transform: rotate(0);
+}
