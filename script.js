@@ -4,8 +4,6 @@ class App {
             throw new Error("App can't be instantiated more than once.")
         }
         App._instance = this;
-
-
     }
 
     initialize() {
@@ -14,7 +12,7 @@ class App {
         nunito_clock.updateTime()
 
         if (settings.randomColorChangeEnabled) {
-            nunito_clock.applyRandomColorPalette(settings.activeColorPalettes);
+            app.applyRandomColorPalette();
         }
         if (settings.randomRotationChangeEnabled) {
             nunito_clock.applyRandomRotation()
@@ -34,6 +32,36 @@ class App {
             timeout_overlay.show(settings.timeoutDuration);
         }
     }
+
+    applyRandomColorPalette() {
+        // ensures that the selected is always an active on
+        let active_color_palette_indexes = settings.activeColorPalettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
+
+        let id = getRandomItem(active_color_palette_indexes)
+
+        // ensures that the selected palette is not the same as the previous one, 
+        // when there is more then one active color
+        if ((settings.colorPaletteId) && (settings.activeColorPalettes.filter((num) => { num === 1 }).length > 1)) {
+            while ((id === settings.colorPaletteId)) {
+                id = getRandomItem(active_color_palette_indexes);
+            }
+        }
+
+        if (id === undefined) {
+            nunito_clock.applyNoPalette();
+            kenia_clock.applyNoPalette();
+            sixcaps_clock.applyNoPalette();
+            badeen_clock.applyNoPalette();
+            return
+        }
+
+        settings.colorPaletteId = id;
+        nunito_clock.applyColorPalette();
+        kenia_clock.applyColorPalette();
+        sixcaps_clock.applyColorPalette();
+        badeen_clock.applyColorPalette();
+    }
+
 }
 
 class Settings {
@@ -43,24 +71,36 @@ class Settings {
     #colorIntervalTime = 60000; // 1 minute
     #rotationIntervalTime = 60000; // 1 minute
     #timeoutDuration = 900000; // 15 minutes
-    #activeColorPalettes = [1, 1, 1, 1, 1, 1, 1]; // all palettes active
+    #colorPalettes = [
+        ["#cc5803dd", "#e2711ddd", "#ff9505dd", "#ffb627dd", "#ffc971dd"], //orange
+        ["#ffd6ffdd", "#e7c6ffdd", "#c8b6ffdd", "#b8c0ffdd", "#bbd0ffdd"], //purple
+        ["#f08080dd", "#f4978edd", "#f8ad9ddd", "#fbc4abdd", "#ffdab9dd"], //coral
+        ["#d8f3dcdd", "#b7e4c7dd", "#95d5b2dd", "#74c69ddd", "#52b788dd"], //green
+        ["#d7e3fcdd", "#ccdbfddd", "#c1d3fedd", "#b6ccfedd", "#abc4ffdd"], //blue
+        ["#ff0a54dd", "#ff477edd", "#ff5c8add", "#ff7096dd", "#ff85a1dd"], //pink
+        ["#ffee70dd", "#ffec5cdd", "#ffe747dd", "#ffe433dd", "#ffdd1fdd"] //yellow
+    ]
+    #activeColorPalettes = this.#colorPalettes.map(function(){return 1}); // all palettes active
     #colorPaletteId = 0; // default palette id
-
+    #noPalette = "#ffffffdd";
+    
     constructor() {
-
+        
         if (Settings._instance) {
             throw new Error("Settings can't be instantiated more than once.")
         }
         Settings._instance = this;
-
+        
         this.randomColorChangeEnabled = this.#randomColorChangeEnabled;
         this.randomRotationChangeEnabled = this.#randomRotationChangeEnabled;
         this.timeoutDarkenEnabled = this.#timeoutDarkenEnabled;
         this.colorIntervalTime = this.#colorIntervalTime; // 1 minute
         this.rotationIntervalTime = this.#rotationIntervalTime; // 1 minute
         this.timeoutDuration = this.#timeoutDuration; // 15 minutes
+        this.colorPalettes = this.#colorPalettes; // predefined color palettes
         this.activeColorPalettes = this.#activeColorPalettes; // all palettes active
         this.colorPaletteId = this.#colorPaletteId; // default palette id
+        this.noPalette = this.#noPalette;
         this.appliedInDOM = false;
     }
 
@@ -303,20 +343,8 @@ class Clock {
         this.minutesTens = this.element.getElementsByClassName("time")[3];
         this.minutesOnes = this.element.getElementsByClassName("time")[4];
 
-        this.colorPalettes = [
-            ["#cc5803dd", "#e2711ddd", "#ff9505dd", "#ffb627dd", "#ffc971dd"], //orange
-            ["#ffd6ffdd", "#e7c6ffdd", "#c8b6ffdd", "#b8c0ffdd", "#bbd0ffdd"], //purple
-            ["#f08080dd", "#f4978edd", "#f8ad9ddd", "#fbc4abdd", "#ffdab9dd"], //coral
-            ["#d8f3dcdd", "#b7e4c7dd", "#95d5b2dd", "#74c69ddd", "#52b788dd"], //green
-            ["#d7e3fcdd", "#ccdbfddd", "#c1d3fedd", "#b6ccfedd", "#abc4ffdd"], //blue
-            ["#ff0a54dd", "#ff477edd", "#ff5c8add", "#ff7096dd", "#ff85a1dd"], //pink
-            ["#ffee70dd", "#ffec5cdd", "#ffe747dd", "#ffe433dd", "#ffdd1fdd"] //yellow
-        ]
-        this.noPalette = "#ffffffdd";
-
         this.element.addEventListener("click", this.clockClicked.bind(this));
         this.updateTime();
-        this.applyRandomColorPalette()
     }
 
     updateTime() {
@@ -346,31 +374,8 @@ class Clock {
     }
 
     clockClicked() {
-        this.applyRandomColorPalette(settings.activeColorPalettes);
+        app.applyRandomColorPalette();
         main_menu.showToggleButton();
-    }
-
-    applyRandomColorPalette() {
-        // ensures that the selected is always an active on
-        let active_color_palette_indexes = settings.activeColorPalettes.map((num, index) => num === 1 ? index : -1).filter(index => index !== -1);
-        
-        let id = getRandomItem(active_color_palette_indexes)
-
-        // ensures that the selected palette is not the same as the previous one, 
-        // when there is more then one active color
-        if ((settings.colorPaletteId) && (settings.activeColorPalettes.filter((num) => { num === 1 }).length > 1)) {
-            while ((id === settings.colorPaletteId)) {
-                id = getRandomItem(active_color_palette_indexes);
-            }
-        }
-
-        if (id === undefined) {
-            this.applyNoPalette();
-            return
-        }
-
-        settings.colorPaletteId = id;
-        this.applyColorPalette();
     }
 
     cycleThroughColorPalettes() {
@@ -388,8 +393,8 @@ class Clock {
         this.applyColorPalette();
     }
 
-    applyColorPalette(){
-        let palette = this.colorPalettes[settings.colorPaletteId];
+    applyColorPalette() {
+        let palette = settings.colorPalettes[settings.colorPaletteId];
         this.hourTens.style.color = palette[0]
         this.hourOnes.style.color = palette[1]
         this.dots.style.color = palette[2]
@@ -397,12 +402,12 @@ class Clock {
         this.minutesOnes.style.color = palette[4]
     }
 
-    applyNoPalette(){
-        this.hourTens.style.color = this.noPalette
-        this.hourOnes.style.color = this.noPalette
-        this.dots.style.color = this.noPalette
-        this.minutesTens.style.color = this.noPalette
-        this.minutesOnes.style.color = this.noPalette
+    applyNoPalette() {
+        this.hourTens.style.color = settings.noPalette
+        this.hourOnes.style.color = settings.noPalette
+        this.dots.style.color = settings.noPalette
+        this.minutesTens.style.color = settings.noPalette
+        this.minutesOnes.style.color = settings.noPalette
     }
 }
 
@@ -410,32 +415,17 @@ class KeniaClock extends Clock {
     constructor() {
         super($id("kenia"));
     }
-
-    clockClicked() {
-        this.cycleThroughColorPalettes();
-        main_menu.showToggleButton();
-    }
 }
 
 class SixCapsClock extends Clock {
     constructor() {
         super($id("sixcaps"));
     }
-    
-    clockClicked() {
-        this.cycleThroughColorPalettes();
-        main_menu.showToggleButton();
-    }
 }
 
 class BadeenClock extends Clock {
     constructor() {
         super($id("badeen"));
-    }
-
-    clockClicked() {
-        this.cycleThroughColorPalettes();
-        main_menu.showToggleButton();
     }
 }
 
@@ -462,7 +452,7 @@ class NunitoClock extends Clock {
 
     clockClicked() {
         if (settings.randomColorChangeEnabled) {
-            this.applyRandomColorPalette(settings.activeColorPalettes);
+            app.applyRandomColorPalette();
         }
         if (settings.randomRotationChangeEnabled) {
             this.applyRandomRotation();
@@ -678,7 +668,7 @@ class ColorSubMenu extends SubMenu {
 
     resetColorSettings() {
         settings.resetColorSettings();
-        nunito_clock.applyRandomColorPalette(settings.activeColorPalettes);
+        app.applyRandomColorPalette();
     }
 
     togglePalette(e) {
@@ -762,8 +752,7 @@ class TimeoutSubMenu extends SubMenu {
     }
 }
 
-// Application instance
-const app = new App();
+
 
 // settings instance
 const settings = new Settings();
@@ -811,6 +800,9 @@ const credits_sub_menu_button = new SubMenuButton(
     credits_sub_menu
 );
 
+// Application instance
+const app = new App();
+
 // intervals
 const timeInterval = new SyncedInterval(
     60000,
@@ -819,7 +811,7 @@ const timeInterval = new SyncedInterval(
 );
 const colorInterval = new SyncedInterval(
     settings.colorIntervalTime,
-    nunito_clock.applyRandomColorPalette.bind(nunito_clock),
+    app.applyRandomColorPalette,
     "Color"
 );
 const rotationInterval = new SyncedInterval(
@@ -840,6 +832,8 @@ main_menu.setSubMenuButtons([
     timeout_sub_menu_button,
     credits_sub_menu_button
 ]);
+
+
 
 // utility functions
 function $id(id) { return document.getElementById(id) };
