@@ -11,6 +11,10 @@ Wird das Laden beendet oder das Handy hochkant gedreht, schließt er sich wieder
 
 ## APK bekommen
 
+**Direkter Download der neuesten Version:**
+https://github.com/DerDawo/StandByScreen/releases/latest/download/StandByScreen.apk
+(wird bei jedem Push auf `main` automatisch neu gebaut und ersetzt).
+
 * GitHub → **Actions** → „Android APK“ → letzter Lauf → Artefakt **StandByScreen-apk** herunterladen
   (ZIP entpacken, `.apk` aufs Handy, installieren, „Unbekannte Apps installieren“ erlauben).
 * Oder ein Tag `v1.0.0` pushen: dann hängt die APK zusätzlich an einem GitHub-Release.

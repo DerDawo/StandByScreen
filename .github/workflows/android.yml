@@ -54,3 +54,20 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: android/StandByScreen-${{ github.run_number }}.apk
+
+      - name: Feste Download-Datei vorbereiten
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: cp StandByScreen-${{ github.run_number }}.apk StandByScreen.apk
+
+      - name: Aktuelle APK als Release "Neueste APK" veröffentlichen (bei jedem Push auf main)
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-latest
+          name: Neueste APK
+          body: |
+            Automatisch gebaut aus `main` (Commit ${{ github.sha }}, Build ${{ github.run_number }}).
+            Direkter Download: https://github.com/${{ github.repository }}/releases/latest/download/StandByScreen.apk
+          make_latest: true
+          overwrite_files: true
+          files: android/StandByScreen.apk
