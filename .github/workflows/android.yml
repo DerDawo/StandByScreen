@@ -2,6 +2,9 @@ name: Android APK
 
 on:
   push:
+    # branches muss explizit stehen: sind nur tags gesetzt, laufen Branch-Pushes gar nicht
+    branches:
+      - "**"
     paths:
       - "android/**"
       - "index.html"
